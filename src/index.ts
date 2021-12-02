@@ -13,6 +13,7 @@ export {
   hardcoded,
   dict,
   tuple,
+  Infer,
 } from "./decoder";
 
 export { Reason, reasonToString } from "./reason";
