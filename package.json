@@ -3,6 +3,16 @@
   "version": "0.0.2",
   "description": "type safe decoding in typescript",
   "main": "index.ts",
+  "author": "Alessandro Scandone",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ascandone/ts-decode"
+  },
+  "keywords": [
+    "typescript",
+    "decode",
+    "parsing"
+  ],
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watchAll"
