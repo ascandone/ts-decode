@@ -63,7 +63,9 @@ export const never = (reason: string) => new Decoder(() => fail(reason));
 
 export const unknown = new Decoder(success);
 
-export const hardcoded = <T>(constant: T) =>
+type Primitive = string | number | boolean | null | undefined;
+
+export const hardcoded = <T extends Primitive>(constant: T) =>
   new Decoder((value) => {
     if (value === constant) {
       return success(constant);
