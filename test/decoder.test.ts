@@ -10,6 +10,7 @@ import {
   hardcoded,
   dict,
   success,
+  null_,
 } from "../src/index";
 
 describe("Primitives", () => {
@@ -200,6 +201,19 @@ describe("Nil", () => {
     expectSuccess(dec, { x: undefined });
     expectFail(dec, { x: null });
     expectFail(dec, {});
+  });
+
+  test("nil field field", () => {
+    const nil = <T>(decoder: Decoder<T>) =>
+      oneOf(decoder, undefined_, null_).optional;
+
+    const dec = object({ x: nil(string) });
+
+    expectSuccess(dec, { x: "str" });
+    expectFail(dec, { x: 42 });
+    expectSuccess(dec, { x: undefined });
+    expectSuccess(dec, { x: null });
+    expectSuccess(dec, {});
   });
 });
 
