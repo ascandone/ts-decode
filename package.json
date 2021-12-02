@@ -1,15 +1,13 @@
 {
-  "name": "dec",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "ts-decode",
+  "version": "0.0.1",
+  "description": "type safe decoding in typescript",
+  "main": "index.ts",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watchAll"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "typescript": "^4.5.2"
   },
