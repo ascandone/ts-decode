@@ -65,3 +65,35 @@ const treeDecoder: Decoder<Tree> = object({
   children: lazy(() => array(treeDecoder)).required,
 });
 ```
+
+### Optional values semantics
+
+```ts
+//  Decoder<{ x: string }>
+const dec1 = object({ x: string.required });
+dec1.decode({ x: "str" }); // => ✅
+dec1.decode({ x: undefined }); // => 🟥
+dec1.decode({ x: null }); // => 🟥
+dec1.decode({}); // => 🟥
+
+//  Decoder<{ x?: string | undefined }>
+const dec2 = object({ x: string.optional });
+dec2.decode({ x: "str" }); // => ✅
+dec2.decode({ x: undefined }); // => 🟥
+dec2.decode({ x: null }); // => 🟥
+dec2.decode({}); // => ✅
+
+//  Decoder<{ x: string }>
+const dec3 = object({ x: string.default("") });
+dec3.decode({ x: "str" }); // => ✅
+dec3.decode({ x: undefined }); // => 🟥
+dec3.decode({ x: null }); // => 🟥
+dec3.decode({}); // => ✅ { x: "" }
+
+//  Decoder<{ x: string | undefined }>
+const dec4 = object({ x: nil(string).required });
+dec4.decode({ x: "str" }); // => ✅
+dec4.decode({ x: undefined }); // => ✅
+dec4.decode({ x: null }); // => 🟥
+dec4.decode({}); // => 🟥
+```

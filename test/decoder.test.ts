@@ -2,7 +2,6 @@ import {
   number,
   string,
   array,
-  unknown,
   Decoder,
   undefined_,
   object,
@@ -10,6 +9,7 @@ import {
   lazy,
   hardcoded,
   dict,
+  success,
 } from "../src/index";
 
 describe("Primitives", () => {
@@ -159,6 +159,48 @@ test("Dict", () => {
   expectSuccess(dec, { x: 42 });
 
   expectFail(dec, { x: "not a num" });
+});
+
+describe("Nil", () => {
+  test("`required` field", () => {
+    const dec = object({ x: string.required });
+
+    expectSuccess(dec, { x: "str" });
+    expectFail(dec, { x: 42 });
+    expectFail(dec, { x: undefined });
+    expectFail(dec, { x: null });
+    expectFail(dec, {});
+  });
+
+  test("`optional` field", () => {
+    const dec = object({ x: string.optional });
+
+    expectSuccess(dec, { x: "str" });
+    expectFail(dec, { x: 42 });
+    expectFail(dec, { x: undefined });
+    expectFail(dec, { x: null });
+    expectSuccess(dec, {});
+  });
+
+  test("`default` field", () => {
+    const dec = object({ x: string.default("") });
+
+    expectSuccess(dec, { x: "str" });
+    expectFail(dec, { x: 42 });
+    expectFail(dec, { x: undefined });
+    expectFail(dec, { x: null });
+    expect(dec.decode({})).toEqual(success({ x: "" }));
+  });
+
+  test("nullable `required` field", () => {
+    const dec = object({ x: oneOf(string, undefined_).required });
+
+    expectSuccess(dec, { x: "str" });
+    expectFail(dec, { x: 42 });
+    expectSuccess(dec, { x: undefined });
+    expectFail(dec, { x: null });
+    expectFail(dec, {});
+  });
 });
 
 // TODO custom matchers
