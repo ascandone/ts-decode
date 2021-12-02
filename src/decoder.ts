@@ -249,4 +249,24 @@ export const dict = <T>(decoder: Decoder<T>): Decoder<{ [key: string]: T }> =>
     return success(newObj);
   });
 
-// TODO tuple
+type Tuple<T extends unknown[]> = T extends [Decoder<infer Hd>, ...infer Tl]
+  ? [Hd, ...Tuple<Tl>]
+  : [];
+
+export const tuple = <T extends Decoder<unknown>[]>(
+  ...decoders: T
+): Decoder<Tuple<T>> =>
+  new Decoder((value) => {
+    const ret: any = [];
+    for (const decoder of decoders) {
+      const result = decoder.decode(value);
+
+      if (result.error) {
+        return result;
+      } else {
+        ret.push(result.value);
+      }
+    }
+
+    return success(ret);
+  });
