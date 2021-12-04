@@ -1,6 +1,8 @@
+![minzipped size](https://badgen.net/bundlephobia/minzip/ts-decode) ![Dependency count](https://badgen.net/bundlephobia/dependency-count/ts-decode)
+
 ## `ts-decode`
 
-Combinators for type-safe `unknown => T` decoding
+> Straightforward, type-safe `unknown => T` decoding combinators
 
 ### Basic example
 
@@ -91,7 +93,7 @@ dec3.decode({ x: null }); // => 🟥
 dec3.decode({}); // => ✅ { x: "" }
 
 //  Decoder<{ x: string | undefined }>
-const dec4 = object({ x: nil(string).required });
+const dec4 = object({ x: oneOf(string, undefined_).required });
 dec4.decode({ x: "str" }); // => ✅
 dec4.decode({ x: undefined }); // => ✅
 dec4.decode({ x: null }); // => 🟥
