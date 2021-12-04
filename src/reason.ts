@@ -1,4 +1,4 @@
-import { xmlToString, Xml, text, node } from "./xml";
+import { xmlToString, Xml, text, node } from "./internals/xml";
 
 export type Reason =
   | { type: "FAIL"; reason: string }
