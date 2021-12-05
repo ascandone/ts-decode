@@ -1,19 +1,24 @@
 export {
+  // Types
+  Decoder,
+  Infer,
+  // Primitives
   number,
   string,
   boolean,
   null_,
   undefined_,
+  unknown,
+  hardcoded,
+  never,
+  of,
+  // Higher order decoders
   array,
   object,
-  unknown,
-  Decoder,
   oneOf,
   lazy,
-  hardcoded,
   dict,
   tuple,
-  Infer,
 } from "./decoder";
 
 export { Reason, reasonToString } from "./reason";

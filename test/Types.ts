@@ -11,9 +11,10 @@ const userDecoder = object({
 
 type InferTest = assert<
   [
-    typeChecking<User, { name: string }, shouldFail>,
+    typeChecking<User, { name: string }, shouldPass>,
+    typeChecking<User, { name: string; age: undefined }, shouldFail>,
+    typeChecking<User, { name: string; age?: number }, shouldPass>,
     typeChecking<User, { name: string; age?: string }, shouldFail>,
-
     typeChecking<User, { name: string; age?: number }, shouldPass>,
     typeChecking<User, { name: string; age?: number | undefined }, shouldPass>
   ]

@@ -8,7 +8,7 @@ class Decoder<T = unknown> {
   constructor(private _decode: (value: unknown) => Result<T>) {}
 
   map<U>(f: (value: T) => U): Decoder<U> {
-    return this.andThen((value) => succeed(f(value)));
+    return this.andThen((value) => of(f(value)));
   }
 
   andThen<U>(f: (value: T) => Decoder<U>): Decoder<U> {
@@ -58,7 +58,7 @@ export type { Decoder };
 
 export type Infer<T> = T extends Decoder<infer U> ? U : never;
 
-export const succeed = <T>(value: T) => new Decoder(() => success(value));
+export const of = <T>(value: T) => new Decoder(() => success(value));
 export const never = (reason: string) => new Decoder(() => fail(reason));
 
 export const unknown = new Decoder(success);
@@ -66,13 +66,11 @@ export const unknown = new Decoder(success);
 type Primitive = string | number | boolean | null | undefined;
 
 export const hardcoded = <T extends Primitive>(constant: T) =>
-  new Decoder((value) => {
-    if (value === constant) {
-      return success(constant);
-    } else {
-      return failMsg(JSON.stringify(value), value);
-    }
-  });
+  new Decoder((value) =>
+    value === constant
+      ? success(constant)
+      : failMsg(JSON.stringify(value), value)
+  );
 
 // Primitives
 
@@ -169,16 +167,11 @@ type ExtractOptional<T> = T extends OptionalField<infer U> ? U : never;
 
 type ObjectSpecs = { [key: string]: Field<unknown> };
 
-type DecodedObject<O extends ObjectSpecs> = Identity<
-  {
-    [key in keyof O as SelectRequired<key, O[key]>]: ExtractRequired<O[key]>;
-  } & {
-    [key in keyof O as SelectOptional<key, O[key]>]?: ExtractOptional<O[key]>;
-  }
->;
-
-// https://www.reddit.com/r/typescript/comments/lknqyz/comment/gnlbot9/?utm_source=reddit&utm_medium=web2x&context=3
-type Identity<T> = T extends object ? { [K in keyof T]: Identity<T[K]> } : T;
+type DecodedObject<O extends ObjectSpecs> = {
+  [key in keyof O as SelectRequired<key, O[key]>]: ExtractRequired<O[key]>;
+} & {
+  [key in keyof O as SelectOptional<key, O[key]>]?: ExtractOptional<O[key]>;
+};
 
 export const object = <O extends ObjectSpecs>(
   specs: O

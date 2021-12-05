@@ -11,7 +11,9 @@ import {
   dict,
   success,
   null_,
+  Infer,
 } from "../src/index";
+import { assert, shouldFail, shouldPass, typeChecking } from "./TestHelpers";
 
 describe("Primitives", () => {
   test("Number", () => {
@@ -100,6 +102,13 @@ describe("oneOf", () => {
   test("primitives", () => {
     const dec = oneOf(string, undefined_);
 
+    type Test1 = assert<
+      [
+        typeChecking<Infer<typeof dec>, string | undefined, shouldPass>,
+        typeChecking<typeof dec, Decoder<string | undefined>, shouldPass>
+      ]
+    >;
+
     expectSuccess(dec, "Hello");
     // expectSuccess(dec, undefined);
 
@@ -134,11 +143,11 @@ test("Hardcoded", () => {
   const decodeOption = <T>(decoder: Decoder<T>): Decoder<Option<T>> =>
     oneOf(
       object({
-        type: hardcoded("SOME" as const).required,
+        type: hardcoded("SOME").required,
         value: decoder.required,
       }),
       object({
-        type: hardcoded("NONE" as const).required,
+        type: hardcoded("NONE").required,
       })
     );
 
@@ -194,7 +203,9 @@ describe("Nil", () => {
   });
 
   test("nullable `required` field", () => {
-    const dec = object({ x: oneOf(string, undefined_).required });
+    const dec = object({
+      x: oneOf(string, undefined_).required,
+    });
 
     expectSuccess(dec, { x: "str" });
     expectFail(dec, { x: 42 });

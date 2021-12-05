@@ -1,12 +1,13 @@
-// prettier-ignore
-type Equals<X, Y> =
-    (<T>() => T extends X ? 0 : 1) extends (<T>() => T extends Y ? 0 : 1)
-      ? true
-      : false;
+export type Equals<X, Y> = X extends Y ? (Y extends X ? true : false) : false;
+
+type T = Equals<number, number>;
 
 export type shouldPass = true;
 export type shouldFail = false;
 
 export type assert<_ extends true[]> = void;
 
-export type typeChecking<T, U, Expect> = Equals<Equals<T, U>, Expect>;
+export type typeChecking<T, U, Expect extends boolean> = Equals<
+  Equals<T, U>,
+  Expect
+>;
