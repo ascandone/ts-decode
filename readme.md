@@ -4,98 +4,67 @@
 
 > Straightforward, type-safe `unknown => T` decoding combinators
 
-### Basic example
+### Usage
 
 ```ts
-import { number } from "ts-decode";
-// number : Decoder<number>
+// We can compose the decoders to create new decoders
 
-const json = JSON.parse(someData);
+const personTypeDecoder = oneOf(
+  hardcoded("developer"),
+  hardcoded("project manager"),
+  hardcoded("designer"),
+);
 
-// result: Result<number>
-const result = number.decode(json);
-
-if (!result.error) {
-  // now we have the compile-time guarantee that
-  // decoded: number
-  // without manual casting
-  const decoded = result.value;
-} else {
-  // Or if it failed we can log the error description
-  const reason = result.reason;
-}
-```
-
-### Complex example
-
-<!-- prettier-ignore -->
-```ts
-const person = object({
+const personDecoder = object({
   name: string.required,
   id: number.required,
-  kind: oneOf(
-    hardcoded("developer"),
-    hardcoded("devop"),
-    hardcoded("designer")
-  ).required,
+  kind: personTypeDecoder.required,
   phoneNumbers: array(string).optional,
 });
 
 /*
-automagically inferred as:
+Automagically inferred as:
 
 type Person = {
     name: string;
     id: number;
-    kind: "developer" | "devop" | "designer";
+    kind: "developer" | "project manager" | "designer";
     phoneNumbers?: string[] | undefined;
 }
 */
-type Person = Infer<typeof user>;
+type Person = Infer<typeof personDecoder>;
+
+// The decoder can now validate a value of unknown type
+const json = JSON.parse(`
+  { "name": "John Doe",
+    "id": 1234,
+    "kind": "project-manager",
+    "phoneNumbers": ["123123123"]
+  }
+`);
+
+const result = personDecoder.decode(json);
+
+if (result.error === false) {
+  // now we have the compile-time guarantee that this
+  const person = result.value;
+  // has type `Person` without manual casting
+} else {
+  // Or if it failed we can log the error description
+  const reason = result.reason;
+  console.error(reasonToString(reason));
+}
 ```
 
-### Recursive type
+By the way, did you notice the bug?
+Good thing we printed it out
 
-```ts
-type Tree = {
-  label: string;
-  children: Tree[];
-};
-
-const treeDecoder: Decoder<Tree> = object({
-  label: string.required,
-  children: lazy(() => array(treeDecoder)).required,
-});
-```
-
-### Optional values semantics
-
-```ts
-//  Decoder<{ x: string }>
-const dec1 = object({ x: string.required });
-dec1.decode({ x: "str" }); // => ✅
-dec1.decode({ x: undefined }); // => 🟥
-dec1.decode({ x: null }); // => 🟥
-dec1.decode({}); // => 🟥
-
-//  Decoder<{ x?: string | undefined }>
-const dec2 = object({ x: string.optional });
-dec2.decode({ x: "str" }); // => ✅
-dec2.decode({ x: undefined }); // => 🟥
-dec2.decode({ x: null }); // => 🟥
-dec2.decode({}); // => ✅
-
-//  Decoder<{ x: string }>
-const dec3 = object({ x: string.default("") });
-dec3.decode({ x: "str" }); // => ✅
-dec3.decode({ x: undefined }); // => 🟥
-dec3.decode({ x: null }); // => 🟥
-dec3.decode({}); // => ✅ { x: "" }
-
-//  Decoder<{ x: string | undefined }>
-const dec4 = object({ x: oneOf(string, undefined_).required });
-dec4.decode({ x: "str" }); // => ✅
-dec4.decode({ x: undefined }); // => ✅
-dec4.decode({ x: null }); // => 🟥
-dec4.decode({}); // => 🟥
+```xml
+<field-type name="kind">
+  <one-of>
+    <fail> Expected "developer", got "project-manager" instead  </fail>
+    <fail> Expected "project manager", got "project-manager" instead  </fail>
+    <fail> Expected "designer", got "project-manager" instead  </fail>
+  </one-of>
+</field-type>
 ```
