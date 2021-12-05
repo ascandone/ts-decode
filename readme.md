@@ -68,3 +68,5 @@ Good thing we printed it out
   </one-of>
 </field-type>
 ```
+
+You can find the complete API in this project [wiki](https://github.com/ascandone/ts-decode/wiki/Decoders)
