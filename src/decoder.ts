@@ -2,7 +2,7 @@ import { Reason, reasonToString } from "./reason";
 import { fail, success, Result } from "./result";
 
 const failMsg = (expected: string, got: unknown) =>
-  fail(`Expected ${expected}, got \`${JSON.stringify(got)}\` instead`);
+  fail(`Expected ${expected}, got ${JSON.stringify(got)} instead`);
 
 class Decoder<T = unknown> {
   constructor(private _decode: (value: unknown) => Result<T>) {}
@@ -69,29 +69,29 @@ export const hardcoded = <T extends Primitive>(constant: T) =>
   new Decoder((value) =>
     value === constant
       ? success(constant)
-      : failMsg(JSON.stringify(value), value)
+      : failMsg(JSON.stringify(constant), value),
   );
 
 // Primitives
 
 export const number = new Decoder((value) =>
-  typeof value === "number" ? success(value) : failMsg("a number", value)
+  typeof value === "number" ? success(value) : failMsg("a number", value),
 );
 
 export const string = new Decoder((value) =>
-  typeof value === "string" ? success(value) : failMsg("a string", value)
+  typeof value === "string" ? success(value) : failMsg("a string", value),
 );
 
 export const boolean = new Decoder((value) =>
-  typeof value === "boolean" ? success(value) : failMsg("a boolean", value)
+  typeof value === "boolean" ? success(value) : failMsg("a boolean", value),
 );
 
 export const null_ = new Decoder<null>((value) =>
-  value === null ? success(value) : failMsg("null", value)
+  value === null ? success(value) : failMsg("null", value),
 );
 
 export const undefined_ = new Decoder<undefined>((value) =>
-  value === undefined ? success(value) : failMsg("undefined", value)
+  value === undefined ? success(value) : failMsg("undefined", value),
 );
 
 // Higher order decoders
@@ -174,7 +174,7 @@ type DecodedObject<O extends ObjectSpecs> = {
 };
 
 export const object = <O extends ObjectSpecs>(
-  specs: O
+  specs: O,
 ): Decoder<DecodedObject<O>> =>
   new Decoder((value) => {
     if (typeof value !== "object" || value === null) {

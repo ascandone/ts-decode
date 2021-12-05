@@ -86,14 +86,14 @@ describe("Object", () => {
     expect(
       dec.decode({
         x: "hi",
-      }).error
+      }).error,
     ).toBe(true);
 
     expect(
       dec.decode({
         x: 42,
         y: 10,
-      }).error
+      }).error,
     ).toBe(true);
   });
 });
@@ -105,7 +105,7 @@ describe("oneOf", () => {
     type Test1 = assert<
       [
         typeChecking<Infer<typeof dec>, string | undefined, shouldPass>,
-        typeChecking<typeof dec, Decoder<string | undefined>, shouldPass>
+        typeChecking<typeof dec, Decoder<string | undefined>, shouldPass>,
       ]
     >;
 
@@ -130,7 +130,7 @@ test("Lazy", () => {
   expect(
     treeDecoder.decodeUnsafeThrow({
       label: "a",
-    })
+    }),
   ).toEqual({
     label: "a",
     subTree: [],
@@ -148,18 +148,18 @@ test("Hardcoded", () => {
       }),
       object({
         type: hardcoded("NONE").required,
-      })
+      }),
     );
 
   expectSuccess(decodeOption(number), { type: "NONE" });
   expectSuccess(decodeOption(number), { type: "SOME", value: 2 });
 
   expect(
-    decodeOption(number).decode({ type: "SOME", value: "not a number" }).error
+    decodeOption(number).decode({ type: "SOME", value: "not a number" }).error,
   ).toBe(true);
 
   expect(decodeOption(number).decode({ type: "SOME__", value: 2 }).error).toBe(
-    true
+    true,
   );
 });
 

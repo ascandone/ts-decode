@@ -6,7 +6,7 @@ export const text = (value: string): Xml => ({ type: "text", value });
 export const node = (
   tag: string,
   attrs: object = {},
-  children: Xml[] = []
+  children: Xml[] = [],
 ): Xml => ({
   type: "node",
   tag,
@@ -40,7 +40,7 @@ export const xmlToStringHelper = (level: number, xml: Xml): string => {
         return indentationTag + `<${tag}${attrsSpace}${strAttrs}/>`;
       } else if (children.length === 1 && children[0].type === "text") {
         const child = children[0].value;
-        return `${indentationTag}<${tag}${attrsSpace}${strAttrs}> ${child}  </${tag}>`;
+        return `${indentationTag}<${tag}${attrsSpace}${strAttrs}> ${child} </${tag}>`;
       } else {
         // Uppper
 

@@ -16,6 +16,6 @@ type InferTest = assert<
     typeChecking<User, { name: string; age?: number }, shouldPass>,
     typeChecking<User, { name: string; age?: string }, shouldFail>,
     typeChecking<User, { name: string; age?: number }, shouldPass>,
-    typeChecking<User, { name: string; age?: number | undefined }, shouldPass>
+    typeChecking<User, { name: string; age?: number | undefined }, shouldPass>,
   ]
 >;
