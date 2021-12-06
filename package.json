@@ -19,7 +19,7 @@
     "parsing"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "test:watch": "jest --watchAll",
     "build": "tsc",
     "prepare": "npm run build"
