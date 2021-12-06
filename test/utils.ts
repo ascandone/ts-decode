@@ -20,11 +20,3 @@ export function expectFail(
     expect(result.reason).toStrictEqual(reason);
   }
 }
-
-function removeWhitespace(s: string) {
-  return s.replace(/\s/g, "");
-}
-
-function expectEqualExeptWhitespaces(s1: string, s2: string) {
-  expect(removeWhitespace(s1)).toBe(removeWhitespace(s2));
-}

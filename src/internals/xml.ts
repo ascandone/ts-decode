@@ -37,7 +37,7 @@ export const xmlToStringHelper = (level: number, xml: Xml): string => {
       const attrsSpace = strAttrs === "" ? "" : " ";
 
       if (children.length === 0) {
-        return indentationTag + `<${tag}${attrsSpace}${strAttrs}/>`;
+        return indentationTag + `<${tag}${attrsSpace}${strAttrs} />`;
       } else if (children.length === 1 && children[0].type === "text") {
         const child = children[0].value;
         return `${indentationTag}<${tag}${attrsSpace}${strAttrs}> ${child} </${tag}>`;
