@@ -253,11 +253,26 @@ export const tuple = <T extends Decoder<unknown>[]>(
 ): Decoder<Tuple<T>> =>
   new Decoder((value) => {
     const ret: any = [];
-    for (const decoder of decoders) {
-      const result = decoder.decode(value);
+
+    if (!Array.isArray(value)) {
+      return failMsg(`a ${decoders.length}-tuple`, value);
+    }
+
+    if (value.length < decoders.length) {
+      return failMsg(`a ${decoders.length}-tuple`, value);
+    }
+
+    for (let index = 0; index < decoders.length; index++) {
+      const decoder = decoders[index];
+      const arrayValue = value[index];
+
+      const result = decoder.decode(arrayValue);
 
       if (result.error) {
-        return result;
+        return {
+          error: true,
+          reason: { type: "ARRAY", index, reason: result.reason },
+        };
       } else {
         ret.push(result.value);
       }

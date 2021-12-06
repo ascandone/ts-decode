@@ -1,4 +1,4 @@
-import { Decoder } from "../src";
+import { Decoder, Reason, reasonToString } from "../src";
 
 // TODO custom matchers
 export function expectSuccess<T>(decoder: Decoder<T>, value: T) {
@@ -7,8 +7,24 @@ export function expectSuccess<T>(decoder: Decoder<T>, value: T) {
   expect(decoded).toStrictEqual(value);
 }
 
-export function expectFail(decoder: Decoder<unknown>, value: unknown) {
-  const decoded = decoder.decode(value);
+export function expectFail(
+  decoder: Decoder<unknown>,
+  value: unknown,
+  reason?: Reason,
+) {
+  const result = decoder.decode(value);
 
-  expect(decoded.error).toBe(true);
+  expect(result.error).toBe(true);
+
+  if (reason != null && result.error === true) {
+    expect(result.reason).toStrictEqual(reason);
+  }
+}
+
+function removeWhitespace(s: string) {
+  return s.replace(/\s/g, "");
+}
+
+function expectEqualExeptWhitespaces(s1: string, s2: string) {
+  expect(removeWhitespace(s1)).toBe(removeWhitespace(s2));
 }
