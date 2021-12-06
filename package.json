@@ -21,6 +21,8 @@
   "scripts": {
     "test": "jest --coverage",
     "test:watch": "jest --watchAll",
+    "linter:check": "prettier src/* test/* --check",
+    "typescript:check": "tsc --noEmit",
     "build": "tsc",
     "prepare": "npm run build"
   },
