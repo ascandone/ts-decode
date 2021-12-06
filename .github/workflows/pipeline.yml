@@ -11,6 +11,6 @@ jobs:
           node-version: "12.x"
           cache: "npm"
       - run: npm ci
-      - run: npm linter:check
-      - run: npm typescript:check
+      - run: npm run linter:check
+      - run: npm run typescript:check
       - run: npm test
