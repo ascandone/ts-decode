@@ -13,8 +13,8 @@ class Decoder<T = unknown> {
 
   andThen<U>(f: (value: T) => Decoder<U>): Decoder<U> {
     return new Decoder((value) => {
-      const decoded = this.decode(value);
-      return decoded.error ? decoded : f(decoded.value).decode(value);
+      const result = this.decode(value);
+      return result.error ? result : f(result.value).decode(value);
     });
   }
 

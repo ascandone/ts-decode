@@ -15,7 +15,12 @@ describe("Decoder", () => {
 
     test("fail", () => {
       const decoder = number.andThen(() => never("err"));
-      expectFail(decoder, 42);
+      expectFail(decoder, 42, { type: "FAIL", reason: "err" });
+    });
+
+    test("fail 2", () => {
+      const decoder = number.andThen(() => never("err"));
+      expectFail(decoder, "42");
     });
   });
 
