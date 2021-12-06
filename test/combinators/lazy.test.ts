@@ -1,4 +1,5 @@
 import { array, Decoder, lazy, object, string } from "../../src";
+import { expectSuccess } from "../utils";
 
 test("Lazy", () => {
   type Tree = {
@@ -11,12 +12,19 @@ test("Lazy", () => {
     subTree: lazy(() => array(treeDecoder)).default([]),
   });
 
-  expect(
-    treeDecoder.decodeUnsafeThrow({
-      label: "a",
-    }),
-  ).toEqual({
+  const tree: Tree = {
     label: "a",
-    subTree: [],
-  });
+    subTree: [
+      {
+        label: "b",
+        subTree: [],
+      },
+      {
+        label: "c",
+        subTree: [],
+      },
+    ],
+  };
+
+  expectSuccess(treeDecoder, tree);
 });
