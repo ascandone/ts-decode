@@ -1,8 +1,18 @@
-![minzipped size](https://badgen.net/bundlephobia/minzip/ts-decode) ![Dependency count](https://badgen.net/bundlephobia/dependency-count/ts-decode)
+![minzipped size](https://badgen.net/bundlephobia/minzip/ts-decode) ![Dependency count](https://badgen.net/bundlephobia/dependency-count/ts-decode) ![npm version](https://badgen.net/npm/v/ts-decode)
 
 ## `ts-decode`
 
 > Straightforward, type-safe `unknown => T` decoding combinators
+
+### Install
+
+```bash
+# using npm
+npm i ts-decode
+
+# using yarn
+yarn add ts-decode
+```
 
 ### Usage
 
@@ -70,3 +80,5 @@ Good thing we printed it out
 ```
 
 You can find the complete API in this project [wiki](https://github.com/ascandone/ts-decode/wiki/Decoders)
+
+Or you can try it in a [codesanbox](https://codesandbox.io/s/ts-decode-playground-xw3yb?file=/src/index.ts)
