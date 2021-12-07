@@ -80,3 +80,5 @@ Good thing we printed it out
 ```
 
 You can find the complete API in this project [wiki](https://github.com/ascandone/ts-decode/wiki/Decoders)
+
+Or you can try it in a [codesanbox](https://codesandbox.io/s/ts-decode-playground-xw3yb?file=/src/index.ts)
