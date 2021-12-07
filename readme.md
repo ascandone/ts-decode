@@ -1,8 +1,18 @@
-![minzipped size](https://badgen.net/bundlephobia/minzip/ts-decode) ![Dependency count](https://badgen.net/bundlephobia/dependency-count/ts-decode)
+![minzipped size](https://badgen.net/bundlephobia/minzip/ts-decode) ![Dependency count](https://badgen.net/bundlephobia/dependency-count/ts-decode) ![npm version](https://badgen.net/npm/v/ts-decode)
 
 ## `ts-decode`
 
 > Straightforward, type-safe `unknown => T` decoding combinators
+
+### Install
+
+```bash
+# using npm
+npm i ts-decode
+
+# using yarn
+yarn add ts-decode
+```
 
 ### Usage
 
