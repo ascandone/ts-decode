@@ -3,9 +3,6 @@ import { expectFail } from "./utils";
 
 describe("Decoder", () => {
   test("decoder.map()", () => {
-    // TEMP
-    expect(0).toBe(42);
-
     const decoder = number.map((x) => x * 2);
     expect(decoder.decode(100)).toStrictEqual(success(200));
   });
