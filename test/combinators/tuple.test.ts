@@ -1,4 +1,4 @@
-import { number, success, string, tuple } from "../../src/index";
+import { number, string, tuple } from "../../src/index";
 import { expectFail, expectSuccess } from "../utils";
 
 describe("Tuple", () => {
