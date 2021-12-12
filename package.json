@@ -26,7 +26,7 @@
     "parsing"
   ],
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest",
     "test:watch": "jest --watchAll",
     "linter:check": "prettier src/* test/* --check",
     "typescript:check": "tsc --noEmit",
