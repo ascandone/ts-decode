@@ -30,7 +30,7 @@
     "test:watch": "jest --watchAll",
     "linter:check": "prettier src/* test/* --check",
     "typescript:check": "tsc --noEmit",
-    "build": "rm -r dist/ && npm run build:es6 && npm run build:cjs",
+    "build": "rm -f -r dist/ && npm run build:es6 && npm run build:cjs",
     "build:es6": "tsc --project tsconfig.es6.json",
     "build:cjs": "tsc --project tsconfig.cjs.json",
     "prepare": "npm run build"
