@@ -28,7 +28,6 @@
   "scripts": {
     "test": "jest --coverage",
     "test:watch": "jest --watchAll",
-    "codecov": "codecov --token '309f6514-f807-4f47-aebf-0693762a09f4'",
     "linter:check": "prettier src/* test/* --check",
     "typescript:check": "tsc --noEmit",
     "build": "rm -f -r dist/ && npm run build:es6 && npm run build:cjs",
