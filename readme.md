@@ -64,7 +64,7 @@ if (result.error === false) {
 } else {
   // Or if it failed we can log the error description
   const reason = result.reason;
-  console.error(reasonToString(reason));
+  console.error(reasonToXmlString(reason));
 }
 ```
 

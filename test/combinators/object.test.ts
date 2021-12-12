@@ -9,7 +9,6 @@ import {
   lazy,
   hardcoded,
   dict,
-  success,
   null_,
   Infer,
 } from "../../src/index";
@@ -89,7 +88,10 @@ describe("Nil", () => {
     expectFail(dec, { x: 42 });
     expectFail(dec, { x: undefined });
     expectFail(dec, { x: null });
-    expect(dec.decode({})).toEqual(success({ x: "" }));
+    expect(dec.decode({})).toEqual({
+      error: false,
+      value: { x: "" },
+    });
   });
 
   test("nullable `required` field", () => {
