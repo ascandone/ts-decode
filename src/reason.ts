@@ -29,8 +29,12 @@ const reasonToXml = (reason: Reason): Xml => {
   }
 };
 
-export const reasonToString = (reason: Reason): string => {
+export const reasonToXmlString = (reason: Reason): string => {
   const xml = reasonToXml(reason);
 
   return xmlToString(xml);
+};
+
+export const reasonToJsonString = (reason: Reason): string => {
+  return JSON.stringify(reason, null, 2);
 };

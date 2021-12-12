@@ -1,4 +1,4 @@
-import { Reason, reasonToString } from "../src/reason";
+import { Reason, reasonToXmlString } from "../src/reason";
 
 describe("reasonToXml", () => {
   const reason: Reason = {
@@ -9,12 +9,12 @@ describe("reasonToXml", () => {
   const failStr = "<fail> err </fail>";
 
   test("Fail", () => {
-    expect(reasonToString(reason)).toBe(failStr);
+    expect(reasonToXmlString(reason)).toBe(failStr);
   });
 
   test("field-type", () => {
     expect(
-      reasonToString({
+      reasonToXmlString({
         type: "FIELD_TYPE",
         field: "x",
         reason: {
@@ -29,7 +29,7 @@ describe("reasonToXml", () => {
 
   test("array", () => {
     expect(
-      reasonToString({
+      reasonToXmlString({
         type: "ARRAY",
         index: 4,
         reason,
@@ -42,7 +42,7 @@ describe("reasonToXml", () => {
   describe("one-of", () => {
     test("multiple children", () => {
       expect(
-        reasonToString({
+        reasonToXmlString({
           type: "ONE_OF",
           reasons: [
             { type: "FAIL", reason: "a" },
@@ -59,7 +59,7 @@ describe("reasonToXml", () => {
 
     test("single child", () => {
       expect(
-        reasonToString({
+        reasonToXmlString({
           type: "ONE_OF",
           reasons: [reason],
         }),
@@ -71,7 +71,7 @@ describe("reasonToXml", () => {
 
   test("missing-field", () => {
     expect(
-      reasonToString({
+      reasonToXmlString({
         type: "MISSING_FIELD",
         field: "f",
       }),
