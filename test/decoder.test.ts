@@ -1,5 +1,5 @@
-import { never, number, of, success } from "../src";
-import { expectFail } from "./utils";
+import { never, number, of, success, unknown } from "../src";
+import { expectFail, expectSuccess } from "./utils";
 
 describe("Decoder", () => {
   test("decoder.map()", () => {
@@ -41,6 +41,22 @@ describe("Decoder", () => {
 
     test("Should throw when type is wrong", () => {
       expect(() => number.decodeUnsafeThrow("not a number")).toThrow();
+    });
+  });
+
+  describe("andThen + unknown", () => {
+    test("Should allow new decoders", () => {
+      const bigint = unknown.andThen((x) =>
+        typeof x === "bigint"
+          ? of(x)
+          : never(`expected a bigint, got ${x} instead`),
+      );
+
+      expectSuccess(bigint, BigInt(100));
+      expectFail(bigint, 42, {
+        type: "FAIL",
+        reason: "expected a bigint, got 42 instead",
+      });
     });
   });
 });
