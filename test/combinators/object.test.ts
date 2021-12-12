@@ -94,6 +94,15 @@ describe("Nil", () => {
     });
   });
 
+  test("`default` field does not mutate input", () => {
+    const dec = object({ x: string.default("") });
+
+    const o = {};
+    const ret = dec.decodeUnsafeThrow(o);
+
+    expect((o as any).x).toBe(undefined);
+  });
+
   test("nullable `required` field", () => {
     const dec = object({
       x: oneOf(string, undefined_).required,
