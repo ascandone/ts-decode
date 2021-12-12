@@ -5,7 +5,7 @@ export type Xml =
 export const text = (value: string): Xml => ({ type: "text", value });
 export const node = (
   tag: string,
-  attrs: object = {},
+  attrs: object,
   children: Xml[] = [],
 ): Xml => ({
   type: "node",
