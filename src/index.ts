@@ -21,5 +21,5 @@ export {
   tuple,
 } from "./decoder";
 
-export { Reason, reasonToString } from "./reason";
+export { Reason, reasonToXmlString, reasonToJsonString } from "./reason";
 export { Result, success, fail } from "./result";

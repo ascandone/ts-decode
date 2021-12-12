@@ -1,4 +1,4 @@
-import { Reason, reasonToString } from "./reason";
+import { Reason, reasonToJsonString, reasonToXmlString } from "./reason";
 import { fail, success, Result } from "./result";
 
 const failMsg = (expected: string, got: unknown) =>
@@ -36,7 +36,7 @@ class Decoder<T = unknown> {
     const decoded = this._decode(value);
 
     if (decoded.error) {
-      throw new Error(reasonToString(decoded.reason));
+      throw new Error(reasonToJsonString(decoded.reason));
     }
     return decoded.value;
   }
