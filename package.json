@@ -1,6 +1,6 @@
 {
   "name": "ts-decode",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "type safe decoding in typescript",
   "main": "./dist/cjs/index.js",
   "module": "./dist/es6/index.js",
