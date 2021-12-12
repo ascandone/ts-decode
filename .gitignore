@@ -4,3 +4,5 @@ dist
 .vscode
 coverage
 .DS_Store
+
+benchmark/results
