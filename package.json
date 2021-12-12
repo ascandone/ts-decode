@@ -6,11 +6,6 @@
   "module": "./dist/es6/index.js",
   "types": "./dist/es6/index.d.js",
   "sideEffects": false,
-  "exports": {
-    "require": "./dist/cjs/**.js",
-    "import": "./dist/es6/**.js",
-    "default": "./dist/es6/**.js"
-  },
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts"
