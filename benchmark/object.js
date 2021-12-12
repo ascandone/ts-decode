@@ -1,7 +1,7 @@
-import b from "benny";
-import * as tsDec from "../dist/cjs/index";
-import * as zod from "zod";
-import * as iots from "io-ts/Decoder";
+const b = require("benny");
+const tsDec = require("../dist/cjs/index");
+const zod = require("zod");
+const iots = require("io-ts/Decoder");
 
 const input = {
   x: "str",
@@ -28,7 +28,7 @@ const tsDecDecoder = tsDec.object({
 });
 
 b.suite(
-  "Example",
+  "Single object",
 
   b.add("Zod", () => {
     const res = zodDecoder.parse(input);
@@ -44,6 +44,6 @@ b.suite(
 
   b.cycle(),
   b.complete(),
-  // b.save({ file: "reduce", version: "1.0.0" }),
-  // b.save({ file: "reduce", format: "chart.html" }),
+
+  b.save({ file: "single-object", format: "chart.html" }),
 );
