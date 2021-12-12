@@ -1,4 +1,4 @@
-import { Decoder, Reason, reasonToString } from "../src";
+import { Decoder, Reason } from "../src";
 
 // TODO custom matchers
 export function expectSuccess<T>(decoder: Decoder<T>, value: T) {

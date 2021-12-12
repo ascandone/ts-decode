@@ -1,8 +1,13 @@
 import { Reason, reasonToJsonString, reasonToXmlString } from "./reason";
-import { fail, success, Result } from "./result";
+import { Result } from "./result";
 
-const failMsg = (expected: string, got: unknown) =>
-  fail(`Expected ${expected}, got ${JSON.stringify(got)} instead`);
+const failMsg = (expected: string, got: unknown): Result<any> => ({
+  error: true,
+  reason: {
+    type: "FAIL",
+    reason: `Expected ${expected}, got ${JSON.stringify(got)} instead`,
+  },
+});
 
 class Decoder<T = unknown> {
   constructor(private _decode: (value: unknown) => Result<T>) {}
@@ -23,8 +28,9 @@ class Decoder<T = unknown> {
       const str = JSON.parse(json);
       return this.decode(str);
     } catch (error) {
-      //@ts-ignore
-      return fail(error.message);
+      // @ts-ignore
+      const reason: string = error.message;
+      return { error: true, reason: { type: "FAIL", reason } };
     }
   }
 
@@ -58,40 +64,61 @@ export type { Decoder };
 
 export type Infer<T> = T extends Decoder<infer U> ? U : never;
 
-export const of = <T>(value: T) => new Decoder(() => success(value));
-export const never = (reason: string) => new Decoder(() => fail(reason));
+export const of = <T>(value: T) =>
+  new Decoder(() => ({
+    error: false,
+    value,
+  }));
 
-export const unknown = new Decoder(success);
+export const never = (reason: string) =>
+  new Decoder(() => ({
+    error: true,
+    reason: {
+      type: "FAIL",
+      reason,
+    },
+  }));
+
+export const unknown = new Decoder((value) => ({
+  error: false,
+  value,
+}));
 
 type Primitive = string | number | boolean | null | undefined;
 
-export const hardcoded = <T extends Primitive>(constant: T) =>
+export const hardcoded = <T extends Primitive>(constant: T): Decoder<T> =>
   new Decoder((value) =>
     value === constant
-      ? success(constant)
+      ? { error: false, value: constant }
       : failMsg(JSON.stringify(constant), value),
   );
 
 // Primitives
 
 export const number = new Decoder((value) =>
-  typeof value === "number" ? success(value) : failMsg("a number", value),
+  typeof value === "number"
+    ? { error: false, value }
+    : failMsg("a number", value),
 );
 
 export const string = new Decoder((value) =>
-  typeof value === "string" ? success(value) : failMsg("a string", value),
+  typeof value === "string"
+    ? { error: false, value }
+    : failMsg("a string", value),
 );
 
 export const boolean = new Decoder((value) =>
-  typeof value === "boolean" ? success(value) : failMsg("a boolean", value),
+  typeof value === "boolean"
+    ? { error: false, value }
+    : failMsg("a boolean", value),
 );
 
 export const null_ = new Decoder<null>((value) =>
-  value === null ? success(value) : failMsg("null", value),
+  value === null ? { error: false, value } : failMsg("null", value),
 );
 
 export const undefined_ = new Decoder<undefined>((value) =>
-  value === undefined ? success(value) : failMsg("undefined", value),
+  value === undefined ? { error: false, value } : failMsg("undefined", value),
 );
 
 // Higher order decoders
@@ -149,7 +176,7 @@ export const array = <T>(decoder: Decoder<T>): Decoder<T[]> =>
       }
     }
 
-    return success(ret);
+    return { error: false, value: ret };
   });
 
 type JObject = { [key: string]: unknown };
@@ -212,7 +239,7 @@ export const object = <O extends ObjectSpecs>(
       }
     }
 
-    return success(o);
+    return { error: false, value: o };
   });
 
 export const lazy = <T>(decoderSupplier: () => Decoder<T>): Decoder<T> =>
@@ -241,7 +268,7 @@ export const dict = <T>(decoder: Decoder<T>): Decoder<{ [key: string]: T }> =>
       }
     }
 
-    return success(newObj);
+    return { error: false, value: newObj };
   });
 
 type Tuple<T extends unknown[]> = T extends [Decoder<infer Hd>, ...infer Tl]
@@ -278,5 +305,5 @@ export const tuple = <T extends Decoder<unknown>[]>(
       }
     }
 
-    return success(ret);
+    return { error: false, value: ret };
   });

@@ -22,4 +22,4 @@ export {
 } from "./decoder";
 
 export { Reason, reasonToXmlString, reasonToJsonString } from "./reason";
-export { Result, success, fail } from "./result";
+export { Result } from "./result";

@@ -1,4 +1,4 @@
-import { number, success, unknown, string, tuple } from "../../src/index";
+import { number, unknown, string, tuple } from "../../src/index";
 import { expectFail, expectSuccess } from "../utils";
 
 describe("Unknown", () => {

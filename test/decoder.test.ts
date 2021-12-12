@@ -1,16 +1,22 @@
-import { never, number, of, success, unknown } from "../src";
+import { never, number, of, unknown } from "../src";
 import { expectFail, expectSuccess } from "./utils";
 
 describe("Decoder", () => {
   test("decoder.map()", () => {
     const decoder = number.map((x) => x * 2);
-    expect(decoder.decode(100)).toStrictEqual(success(200));
+    expect(decoder.decode(100)).toStrictEqual({
+      error: false,
+      value: 200,
+    });
   });
 
   describe("decoder.andThen()", () => {
     test("success", () => {
       const decoder = number.andThen((x) => of(x * 2));
-      expect(decoder.decode(100)).toStrictEqual(success(200));
+      expect(decoder.decode(100)).toStrictEqual({
+        error: false,
+        value: 200,
+      });
     });
 
     test("fail", () => {
@@ -26,7 +32,10 @@ describe("Decoder", () => {
 
   describe("decoder.decodeString", () => {
     test("Success", () => {
-      expect(number.decodeString("42")).toStrictEqual(success(42));
+      expect(number.decodeString("42")).toStrictEqual({
+        error: false,
+        value: 42,
+      });
     });
 
     test("Fail", () => {
