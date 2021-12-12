@@ -5,7 +5,7 @@ export type Xml =
 export const text = (value: string): Xml => ({ type: "text", value });
 export const node = (
   tag: string,
-  attrs: object = {},
+  attrs: object,
   children: Xml[] = [],
 ): Xml => ({
   type: "node",
@@ -29,6 +29,7 @@ export const xmlToStringHelper = (level: number, xml: Xml): string => {
 
   switch (xml.type) {
     case "text":
+      /* istanbul ignore next */
       return indentationTag + xml.value;
 
     case "node":
