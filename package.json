@@ -1,10 +1,16 @@
 {
   "name": "ts-decode",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "type safe decoding in typescript",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es6/index.js",
+  "types": "./dist/es6/index.d.js",
   "sideEffects": false,
+  "exports": {
+    "require": "./dist/cjs/**.js",
+    "import": "./dist/es6/**.js",
+    "default": "./dist/es6/**.js"
+  },
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts"
@@ -24,7 +30,9 @@
     "test:watch": "jest --watchAll",
     "linter:check": "prettier src/* test/* --check",
     "typescript:check": "tsc --noEmit",
-    "build": "tsc",
+    "build": "rm -r dist/ && npm run build:es6 && npm run build:cjs",
+    "build:es6": "tsc --project tsconfig.es6.json",
+    "build:cjs": "tsc --project tsconfig.cjs.json",
     "prepare": "npm run build"
   },
   "license": "MIT",
