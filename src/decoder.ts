@@ -1,4 +1,4 @@
-import { Reason, reasonToJsonString, reasonToXmlString } from "./reason";
+import { Reason, reasonToJsonString } from "./reason";
 import { Result } from "./result";
 
 const failMsg = (expected: string, got: unknown): Result<any> => ({
@@ -10,7 +10,7 @@ const failMsg = (expected: string, got: unknown): Result<any> => ({
 });
 
 class Decoder<T = unknown> {
-  constructor(private _decode: (value: unknown) => Result<T>) {}
+  constructor(public decode: (value: unknown) => Result<T>) {}
 
   map<U>(f: (value: T) => U): Decoder<U> {
     return this.andThen((value) => of(f(value)));
@@ -34,12 +34,8 @@ class Decoder<T = unknown> {
     }
   }
 
-  decode(value: unknown) {
-    return this._decode(value);
-  }
-
   decodeUnsafeThrow(value: unknown) {
-    const decoded = this._decode(value);
+    const decoded = this.decode(value);
 
     if (decoded.error) {
       throw new Error(reasonToJsonString(decoded.reason));
@@ -47,13 +43,8 @@ class Decoder<T = unknown> {
     return decoded.value;
   }
 
-  get required(): RequiredField<T> {
-    return { type: "REQUIRED", decoder: this };
-  }
-
-  get optional(): OptionalField<T> {
-    return { type: "OPTIONAL", decoder: this };
-  }
+  required: RequiredField<T> = { type: "REQUIRED", decoder: this };
+  optional: OptionalField<T> = { type: "OPTIONAL", decoder: this };
 
   default(value: T): RequiredField<T> {
     return { type: "REQUIRED", decoder: this, default: value };
@@ -208,17 +199,15 @@ export const object = <O extends ObjectSpecs>(
       return failMsg("an object", value);
     }
 
-    const o: any = {};
+    const returnObject: any = {};
 
     for (const field in specs) {
       const fieldSpec = specs[field];
 
       const decoder = fieldSpec.decoder;
 
-      const object_ = value as JObject;
-
-      if (field in object_) {
-        const value_ = object_[field];
+      if (field in value) {
+        const value_ = (value as JObject)[field];
         const decoded = decoder.decode(value_);
 
         if (decoded.error) {
@@ -226,20 +215,22 @@ export const object = <O extends ObjectSpecs>(
             error: true,
             reason: { type: "FIELD_TYPE", field, reason: decoded.reason },
           };
-        } else {
-          o[field] = decoded.value;
         }
-      } else if (fieldSpec.type === "REQUIRED" && "default" in fieldSpec) {
-        o[field] = fieldSpec.default;
+
+        returnObject[field] = decoded.value;
       } else if (fieldSpec.type === "REQUIRED") {
-        return {
-          error: true,
-          reason: { type: "MISSING_FIELD", field },
-        };
+        if ("default" in fieldSpec) {
+          returnObject[field] = fieldSpec.default;
+        } else {
+          return {
+            error: true,
+            reason: { type: "MISSING_FIELD", field },
+          };
+        }
       }
     }
 
-    return { error: false, value: o };
+    return { error: false, value: returnObject };
   });
 
 export const lazy = <T>(decoderSupplier: () => Decoder<T>): Decoder<T> =>
