@@ -189,13 +189,18 @@ type DecodedObject<O extends ObjectSpecs> = {
 
 export const object = <O extends ObjectSpecs>(
   specs: O,
-): Decoder<DecodedObject<O>> =>
-  new Decoder((value) => {
+): Decoder<DecodedObject<O>> => {
+  const mutatesObject =
+    Object.values(specs).find(
+      (field) => field.type === "REQUIRED" && "default" in field,
+    ) !== undefined;
+
+  return new Decoder((value) => {
     if (typeof value !== "object" || value === null) {
       return failMsg("an object", value);
     }
 
-    const returnObject: any = {};
+    const returnObject: any = mutatesObject ? { ...value } : value;
 
     for (const field in specs) {
       const fieldSpec = specs[field];
@@ -212,8 +217,6 @@ export const object = <O extends ObjectSpecs>(
             reason: { type: "FIELD_TYPE", field, reason: decoded.reason },
           };
         }
-
-        returnObject[field] = decoded.value;
       } else if (fieldSpec.type === "REQUIRED") {
         if ("default" in fieldSpec) {
           returnObject[field] = fieldSpec.default;
@@ -228,6 +231,7 @@ export const object = <O extends ObjectSpecs>(
 
     return { error: false, value: returnObject };
   });
+};
 
 export const lazy = <T>(decoderSupplier: () => Decoder<T>): Decoder<T> =>
   new Decoder((value) => decoderSupplier().decode(value));
