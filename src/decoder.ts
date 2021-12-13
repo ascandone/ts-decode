@@ -1,7 +1,7 @@
 import { Reason, reasonToJsonString } from "./reason";
 import { Result } from "./result";
 
-const failMsg = (expected: string, got: unknown): Result<any> => ({
+const failMsg = (expected: string, got: unknown): Result<never> => ({
   error: true,
   reason: {
     type: "FAIL",
