@@ -1,18 +1,12 @@
 import {
   number,
   string,
-  array,
   Decoder,
   undefined_,
   object,
   oneOf,
-  lazy,
-  hardcoded,
-  dict,
   null_,
-  Infer,
 } from "../../src/index";
-import { assert, shouldFail, shouldPass, typeChecking } from "../TestHelpers";
 import { expectFail, expectSuccess } from "../utils";
 
 describe("Object", () => {
@@ -92,6 +86,15 @@ describe("Nil", () => {
       error: false,
       value: { x: "" },
     });
+  });
+
+  test("`default` field does not mutate input", () => {
+    const dec = object({ x: string.default("") });
+
+    const o = {};
+    const ret = dec.decodeUnsafeThrow(o);
+
+    expect((o as any).x).toBe(undefined);
   });
 
   test("nullable `required` field", () => {
