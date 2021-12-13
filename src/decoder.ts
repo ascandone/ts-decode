@@ -146,8 +146,6 @@ export const array = <T>(decoder: Decoder<T>): Decoder<T[]> =>
       return failMsg("an array", value);
     }
 
-    const ret: T[] = [];
-
     for (let index = 0; index < value.length; index++) {
       const elem: unknown = value[index];
 
@@ -162,12 +160,10 @@ export const array = <T>(decoder: Decoder<T>): Decoder<T[]> =>
             reason: result.reason,
           },
         };
-      } else {
-        ret.push(result.value);
       }
     }
 
-    return { error: false, value: ret };
+    return { error: false, value };
   });
 
 type JObject = { [key: string]: unknown };
