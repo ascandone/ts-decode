@@ -75,7 +75,7 @@ b.suite(
   }),
 
   b.add("myzod", () => {
-    const res = zodDecoder.parse(input);
+    const res = myzodDecoder.parse(input);
   }),
 
   b.add("ts-decode", () => {
