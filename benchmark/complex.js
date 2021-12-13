@@ -70,16 +70,16 @@ const input = createInput(1000);
 b.suite(
   "Complex object array",
 
-  b.add("zod", () => {
-    const res = zodDecoder.parse(input);
+  b.add("ts-decode", () => {
+    const res = tsDecDecoder.decode(input);
   }),
 
   b.add("myzod", () => {
     const res = myzodDecoder.parse(input);
   }),
 
-  b.add("ts-decode", () => {
-    const res = tsDecDecoder.decode(input);
+  b.add("zod", () => {
+    const res = zodDecoder.parse(input);
   }),
 
   b.add("io-ts", () => {
