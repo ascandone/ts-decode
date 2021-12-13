@@ -1,47 +1,48 @@
 const b = require("benny");
-const tsDec = require("../dist/cjs/index");
-const zod = require("zod");
+
+const { number, array, unknown, never, of } = require("../dist/cjs");
 const myzod = require("myzod");
-const iots = require("io-ts/Decoder");
 
-const zodDecoder = zod.array(zod.number());
-const myzodDecoder = myzod.array(myzod.number());
+const unboxed = (value) =>
+  typeof value === "number"
+    ? { error: false, value }
+    : { error: true, reason: "failure" };
 
-const iotsDecoder = iots.array(iots.number);
-
-const tsDecDecoder = tsDec.array(tsDec.number);
-
-const createInput = (items = 1000) => {
-  const ret = [];
-  for (let i = 0; i < items; i++) {
-    ret.push(42);
+const unboxedThrows = (value) => {
+  if (typeof value === "number") {
+    return value;
   }
-  return ret;
 };
 
-const input = createInput(1000);
+const customDec = unknown.andThen((value) =>
+  typeof value === "number" ? of(value) : never("n"),
+);
 
 b.suite(
   "primitive",
 
-  b.add("Zod", () => {
-    const res = zodDecoder.parse(input);
-  }),
-
   b.add("myzod", () => {
-    const res = myzodDecoder.parse(input);
+    myzod.number().parse(42);
   }),
 
-  b.add("Tsdec", () => {
-    const res = tsDecDecoder.decode(input);
+  b.add("ts-decode", () => {
+    number.decode(42);
   }),
 
-  b.add("iots", () => {
-    const res = iotsDecoder.decode(input);
+  b.add("ts-decode (custom decoder)", () => {
+    customDec.decode(42);
+  }),
+
+  b.add("unboxed", () => {
+    unboxed(42);
+  }),
+
+  b.add("unboxed + throw", () => {
+    try {
+      unboxed(42);
+    } catch (e) {}
   }),
 
   b.cycle(),
   b.complete(),
-
-  b.save({ file: "primitive", format: "chart.html" }),
 );

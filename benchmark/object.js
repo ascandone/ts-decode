@@ -37,7 +37,7 @@ const tsDecDecoder = tsDec.object({
 b.suite(
   "Single object",
 
-  b.add("Zod", () => {
+  b.add("zod", () => {
     const res = zodDecoder.parse(input);
   }),
 
@@ -45,11 +45,11 @@ b.suite(
     const res = myZodDecoder.parse(input);
   }),
 
-  b.add("Tsdec", () => {
+  b.add("ts-decode", () => {
     const res = tsDecDecoder.decode(input);
   }),
 
-  b.add("iots", () => {
+  b.add("io-ts", () => {
     const res = iotsDecoder.decode(input);
   }),
 

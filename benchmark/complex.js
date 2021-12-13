@@ -1,6 +1,7 @@
 const b = require("benny");
 const tsDec = require("../dist/cjs/index");
 const zod = require("zod");
+const myzod = require("myzod");
 const iots = require("io-ts/Decoder");
 
 const zodDecoder = zod.array(
@@ -9,6 +10,15 @@ const zodDecoder = zod.array(
     age: zod.number(),
     numbers: zod.array(zod.number()),
     opt: zod.number().optional(),
+  }),
+);
+
+const myzodDecoder = myzod.array(
+  myzod.object({
+    name: myzod.string(),
+    age: myzod.number(),
+    numbers: myzod.array(myzod.number()),
+    opt: myzod.number().optional(),
   }),
 );
 
@@ -60,15 +70,19 @@ const input = createInput(1000);
 b.suite(
   "Complex object array",
 
-  b.add("Zod", () => {
+  b.add("zod", () => {
     const res = zodDecoder.parse(input);
   }),
 
-  b.add("Tsdec", () => {
+  b.add("myzod", () => {
+    const res = zodDecoder.parse(input);
+  }),
+
+  b.add("ts-decode", () => {
     const res = tsDecDecoder.decode(input);
   }),
 
-  b.add("iots", () => {
+  b.add("io-ts", () => {
     const res = iotsDecoder.decode(input);
   }),
 
