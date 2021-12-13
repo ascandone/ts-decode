@@ -62,7 +62,7 @@ export const of = <T>(value: T) =>
   }));
 
 export const never = (reason: string) =>
-  new Decoder(() => ({
+  new Decoder<never>(() => ({
     error: true,
     reason: {
       type: "FAIL",
