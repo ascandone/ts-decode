@@ -6,6 +6,10 @@ describe("oneOf", () => {
   test("primitives", () => {
     const dec = oneOf(string, undefined_);
 
+    type Z = Infer<typeof dec>;
+
+    type T = typeChecking<Infer<typeof dec>, string | undefined, shouldPass>;
+
     type Test1 = assert<
       [
         typeChecking<Infer<typeof dec>, string | undefined, shouldPass>,

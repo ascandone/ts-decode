@@ -1,20 +1,6 @@
-import {
-  number,
-  string,
-  array,
-  Decoder,
-  undefined_,
-  object,
-  oneOf,
-  lazy,
-  hardcoded,
-  dict,
-  success,
-  null_,
-  Infer,
-} from "../../src/index";
-import { assert, shouldFail, shouldPass, typeChecking } from "../TestHelpers";
-import { expectFail, expectSuccess } from "../utils";
+import { number, Decoder, object, oneOf, hardcoded } from "../../src/index";
+
+import { expectSuccess } from "../utils";
 
 test("Hardcoded", () => {
   type Option<T> = { type: "SOME"; value: T } | { type: "NONE" };
