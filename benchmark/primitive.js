@@ -1,9 +1,11 @@
 const b = require("benny");
 const tsDec = require("../dist/cjs/index");
 const zod = require("zod");
+const myzod = require("myzod");
 const iots = require("io-ts/Decoder");
 
 const zodDecoder = zod.array(zod.number());
+const myzodDecoder = myzod.array(myzod.number());
 
 const iotsDecoder = iots.array(iots.number);
 
@@ -24,6 +26,10 @@ b.suite(
 
   b.add("Zod", () => {
     const res = zodDecoder.parse(input);
+  }),
+
+  b.add("myzod", () => {
+    const res = myzodDecoder.parse(input);
   }),
 
   b.add("Tsdec", () => {

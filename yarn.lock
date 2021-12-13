@@ -2859,6 +2859,11 @@ ms@2.1.2:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
+myzod@^1.8.6:
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/myzod/-/myzod-1.8.6.tgz#c51915cfd8738eaa0679931c7901a18973861648"
+  integrity sha512-YVkAxbepXhPOR0ZQySHjVbvFDnzDsoUYC2d5lk8k21fyuphKQ/+a5h9nI+Kvy7NxDUvJWJifZploGWrh9sg/Cw==
+
 natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
