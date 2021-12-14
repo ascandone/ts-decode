@@ -15,6 +15,10 @@ export {
   // Higher order decoders
   array,
   object,
+  ObjectSpecs,
+  Field,
+  RequiredField,
+  OptionalField,
   oneOf,
   lazy,
   dict,
