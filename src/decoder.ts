@@ -203,6 +203,7 @@ export type Infer<T> = T extends Decoder<infer U> ? U : never;
 
 /**
  * A decoder that always returns the same value, ignoring the given input.
+ * This decoder always suceeds.
  *
  * ```ts
  * succeed(42).decode("ignored value") // =>  ✅ 42
