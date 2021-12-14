@@ -6,6 +6,9 @@ import {
   object,
   oneOf,
   null_,
+  Infer,
+  array,
+  boolean,
 } from "../../src/index";
 import { expectFail, expectSuccess } from "../utils";
 
@@ -120,5 +123,63 @@ describe("Nil", () => {
     expectSuccess(dec, { x: undefined });
     expectSuccess(dec, { x: null });
     expectSuccess(dec, {});
+  });
+});
+
+describe("ObjectDecoder class", () => {
+  type Recipe = Infer<typeof recipe>;
+  const recipe = object({
+    id: string.required,
+    name: string.required,
+    ingredients: array(string).required,
+  });
+
+  test("extends", () => {
+    const recipeWithDifficulty = object({
+      ...recipe.specs,
+      difficult: boolean.required,
+    });
+
+    expectSuccess(recipeWithDifficulty, {
+      id: "x-000",
+      name: "pizza",
+      ingredients: [],
+      difficult: false,
+    });
+  });
+
+  test("merge", () => {
+    const cook = object({ cookName: string.required });
+
+    const recipeWithCook = object({
+      ...cook.specs,
+      ...recipe.specs,
+    });
+
+    expectSuccess(recipeWithCook, {
+      id: "x-000",
+      name: "pizza",
+      cookName: "john doe",
+      ingredients: ["x"],
+    });
+  });
+
+  test("pick", () => {
+    const onlyIdRecipe = recipe.mapSpecs(({ id }) => ({
+      id,
+    }));
+
+    expectSuccess(onlyIdRecipe, { id: "x-000" });
+  });
+
+  test("omit", () => {
+    const noIngredientsRecipe = recipe.mapSpecs(
+      ({ ingredients, ...recipe }) => ({
+        ...recipe,
+      }),
+    );
+
+    expectSuccess(noIngredientsRecipe, { id: "x-000", name: "pizza" });
+    expectFail(noIngredientsRecipe, { id: "x-000" });
   });
 });

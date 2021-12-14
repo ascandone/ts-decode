@@ -10,7 +10,7 @@ const failMsg = (expected: string, got: unknown): Result<never> => ({
 });
 
 class Decoder<T = unknown> {
-  constructor(public decode: (value: unknown) => Result<T>) {}
+  constructor(public readonly decode: (value: unknown) => Result<T>) {}
 
   map<U>(f: (value: T) => U): Decoder<U> {
     return this.andThen((value) => of(f(value)));
@@ -192,51 +192,62 @@ type DecodedObject<O extends ObjectSpecs> = {
   [key in keyof O as SelectOptional<key, O[key]>]?: ExtractOptional<O[key]>;
 };
 
-export const object = <O extends ObjectSpecs>(
-  specs: O,
-): Decoder<DecodedObject<O>> => {
-  const mutatesObject =
-    Object.values(specs).find(
-      (field) => field.type === "REQUIRED" && "default" in field,
-    ) !== undefined;
+class ObjectDecoder<O extends ObjectSpecs> extends Decoder<DecodedObject<O>> {
+  public readonly specs: O;
 
-  return new Decoder((value) => {
-    if (typeof value !== "object" || value === null) {
-      return failMsg("an object", value);
-    }
+  constructor(specs: O) {
+    const mutatesObject =
+      Object.values(specs).find(
+        (field) => field.type === "REQUIRED" && "default" in field,
+      ) !== undefined;
 
-    const returnObject: any = mutatesObject ? { ...value } : value;
+    super((value) => {
+      if (typeof value !== "object" || value === null) {
+        return failMsg("an object", value);
+      }
 
-    for (const field in specs) {
-      const fieldSpec = specs[field];
+      const returnObject: any = mutatesObject ? { ...value } : value;
 
-      const decoder = fieldSpec.decoder;
+      for (const field in specs) {
+        const fieldSpec = specs[field];
 
-      if (field in value) {
-        const value_ = (value as JObject)[field];
-        const decoded = decoder.decode(value_);
+        const decoder = fieldSpec.decoder;
 
-        if (decoded.error) {
-          return {
-            error: true,
-            reason: { type: "FIELD_TYPE", field, reason: decoded.reason },
-          };
-        }
-      } else if (fieldSpec.type === "REQUIRED") {
-        if ("default" in fieldSpec) {
-          returnObject[field] = fieldSpec.default;
-        } else {
-          return {
-            error: true,
-            reason: { type: "MISSING_FIELD", field },
-          };
+        if (field in value) {
+          const value_ = (value as JObject)[field];
+          const decoded = decoder.decode(value_);
+
+          if (decoded.error) {
+            return {
+              error: true,
+              reason: { type: "FIELD_TYPE", field, reason: decoded.reason },
+            };
+          }
+        } else if (fieldSpec.type === "REQUIRED") {
+          if ("default" in fieldSpec) {
+            returnObject[field] = fieldSpec.default;
+          } else {
+            return {
+              error: true,
+              reason: { type: "MISSING_FIELD", field },
+            };
+          }
         }
       }
-    }
 
-    return { error: false, value: returnObject };
-  });
-};
+      return { error: false, value: returnObject };
+    });
+
+    this.specs = specs;
+  }
+
+  mapSpecs<O2 extends ObjectSpecs>(mapper: (specs: O) => O2) {
+    return object(mapper(this.specs));
+  }
+}
+
+export const object = <O extends ObjectSpecs>(specs: O) =>
+  new ObjectDecoder(specs);
 
 export const lazy = <T>(decoderSupplier: () => Decoder<T>): Decoder<T> =>
   new Decoder((value) => decoderSupplier().decode(value));
