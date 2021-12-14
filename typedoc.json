@@ -2,6 +2,7 @@
   "entryPoints": ["./src/index.ts"],
   "categorizeByGroup": false,
   "defaultCategory": "Other",
+  "customCss": "docs-theme/style.css",
   "categoryOrder": [
     "Decode",
     "Primitives",
