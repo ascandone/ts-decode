@@ -369,10 +369,15 @@ type DecodedObject<O extends ObjectSpecs> = {
 /**
  * @category Decode
  */
-class ObjectDecoder<O extends ObjectSpecs> extends Decoder<DecodedObject<O>> {
-  public readonly specs: O;
+class ObjectDecoder<Specs extends ObjectSpecs> extends Decoder<
+  DecodedObject<Specs>
+> {
+  public readonly specs: Specs;
 
-  constructor(specs: O) {
+  /**
+   * @ignore
+   */
+  constructor(specs: Specs) {
     const mutatesObject =
       Object.values(specs).find(
         (field) => field.type === "REQUIRED" && "default" in field,
@@ -418,7 +423,7 @@ class ObjectDecoder<O extends ObjectSpecs> extends Decoder<DecodedObject<O>> {
     this.specs = specs;
   }
 
-  mapSpecs<O2 extends ObjectSpecs>(mapper: (specs: O) => O2) {
+  mapSpecs<NewSpecs extends ObjectSpecs>(mapper: (specs: Specs) => NewSpecs) {
     return object(mapper(this.specs));
   }
 }
