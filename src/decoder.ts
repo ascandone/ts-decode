@@ -507,6 +507,18 @@ class ObjectDecoder<Specs extends ObjectSpecs> extends Decoder<
 export type { ObjectDecoder };
 
 /**
+ * Decodes a object with known fields.
+ *
+ * See {@linkcode Decoder.required}, {@linkcode Decoder.optional}, and {@linkcode Decoder.default} field types
+ *
+ * ```ts
+ * const person = object({
+ *   name: string.required,
+ *   id: number.required,
+ * })
+ *
+ * person.decode({ name: "john doe", id: 11234 }) // => ✅
+ * ```
  * @category Higher order decoders
  */
 export function object<O extends ObjectSpecs>(specs: O) {
@@ -534,7 +546,7 @@ export function lazy<T>(decoderSupplier: () => Decoder<T>): Decoder<T> {
  */
 export function dict<T>(
   decoder: Decoder<T>,
-): Decoder<Partial<{ [key: string]: T }>> {
+): Decoder<{ [key: string]: T | undefined }> {
   return new Decoder((value) => {
     const newObj: { [key: string]: T } = {};
 
