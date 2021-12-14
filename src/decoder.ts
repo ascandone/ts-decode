@@ -10,23 +10,33 @@ const failMsg = (expected: string, got: unknown): Result<never> => ({
 });
 
 /**
+ * A type representing a decoder returning a type Result<T>. Note T is the output type, not necessarily the input type
+ *
  * @category Decode
+ *
+ * @example
+ * ```ts
+ * number // Decoder<number>
+ * number.map(num => (num + 10).toString()) // Decoder<string>
+ * ```
  */
 class Decoder<T = unknown> {
-  constructor(public readonly decode: (value: unknown) => Result<T>) {}
+  /**
+   * @category Decode
+   */
+  public readonly decode: (value: unknown) => Result<T>;
 
-  map<U>(f: (value: T) => U): Decoder<U> {
-    return this.andThen((value) => of(f(value)));
+  /**
+   * @ignore
+   */
+  constructor(decode: (value: unknown) => Result<T>) {
+    this.decode = decode;
   }
 
-  andThen<U>(f: (value: T) => Decoder<U>): Decoder<U> {
-    return new Decoder((value) => {
-      const result = this.decode(value);
-      return result.error ? result : f(result.value).decode(value);
-    });
-  }
-
-  decodeString(json: string) {
+  /**
+   *  @category Decode
+   */
+  decodeString(json: string): Result<T> {
     try {
       const str = JSON.parse(json);
       return this.decode(str);
@@ -37,7 +47,10 @@ class Decoder<T = unknown> {
     }
   }
 
-  decodeUnsafeThrow(value: unknown) {
+  /**
+   *  @category Decode
+   */
+  decodeUnsafeThrow(value: unknown): T {
     const decoded = this.decode(value);
 
     if (decoded.error) {
@@ -46,9 +59,66 @@ class Decoder<T = unknown> {
     return decoded.value;
   }
 
+  /**
+   * Maps the decoded value (when present)
+   *
+   * @category Transform
+   *
+   * @example
+   * ```ts
+   * const f = n => n.toString() + "!"
+   * number.map(f).decode(42) // => ✅ "42!"
+   * number.map(f).decode("str") // => 🟥 "Expected a number, got `\"str\"` instead"
+   * ```
+   */
+  map<U>(f: (value: T) => U): Decoder<U> {
+    return this.andThen((value) => of(f(value)));
+  }
+
+  /**
+   * Applies the given function to the decoded value (when present), and returns the result decoder. Sometimes known as `>>=`/`bind`.
+   *
+   * @category Transform
+   *
+   * @example
+   * ```ts
+   * const stringToInt = (str: string): Result<number> => {
+   * const parsed = Number.parseInt(str)
+   *
+   * if (Number.isNaN(parsed)) {
+   * return fail(`Cannot parse "${str}" as int`)
+   * } else {
+   * return success(parsed)
+   *}
+   * }
+   * string.andThen(stringToInt).decode(42) // => 🟥 "Expected a string, got `42` instead"
+   * string.andThen(stringToInt).decode("42") // => ✅ 42
+   * string.andThen(stringToInt).decode("abc") // => 🟥 "Cannot parse \"abc\" as int"
+   * const f = n => n.toString() + "!"
+   * number.map(f).decode(42) // => ✅ "42!"
+   * number.map(f).decode("str") // => 🟥 "Expected a number, got `\"str\"` instead"
+   * ```
+   */
+  andThen<U>(f: (value: T) => Decoder<U>): Decoder<U> {
+    return new Decoder((value) => {
+      const result = this.decode(value);
+      return result.error ? result : f(result.value).decode(value);
+    });
+  }
+
+  /**
+   *  @category Object
+   */
   required: RequiredField<T> = { type: "REQUIRED", decoder: this };
+
+  /**
+   *  @category Object
+   */
   optional: OptionalField<T> = { type: "OPTIONAL", decoder: this };
 
+  /**
+   *  @category Object
+   */
   default(value: T): RequiredField<T> {
     return { type: "REQUIRED", decoder: this, default: value };
   }
