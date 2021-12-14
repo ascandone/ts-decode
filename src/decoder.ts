@@ -370,6 +370,12 @@ export function oneOf<T extends Decoder<any>[]>(
 }
 
 /**
+ * Decodes an array using the given decoder
+ *
+ * ```ts
+ * array(number).decode([1, 2, 3]) // => ✅ [1, 2, 3]
+ * array(number).decode([1, null, 3]) // => 🟥
+ * ```
  * @category Higher order decoders
  */
 export function array<T>(decoder: Decoder<T>): Decoder<T[]> {
@@ -514,9 +520,20 @@ export function lazy<T>(decoderSupplier: () => Decoder<T>): Decoder<T> {
 }
 
 /**
+ * Given a {@linkcode Decoder} of type `T`, decodes a object as a `string => T` map.
+ * Useful when keys are not statically known
+ *
+ * ```ts
+ * dict(number).decode({ x: 0, y: 1 }) // => ✅ { x: 0, y: 1 }
+ * dict(number).decode({ x: 0, y: "str" }) // => 🟥
+ *
+ * dict(number) // Decoder<Partial<{ [key: string]: number | undefined; }>>
+ * ```
  * @category Higher order decoders
  */
-export function dict<T>(decoder: Decoder<T>): Decoder<{ [key: string]: T }> {
+export function dict<T>(
+  decoder: Decoder<T>,
+): Decoder<Partial<{ [key: string]: T }>> {
   return new Decoder((value) => {
     const newObj: { [key: string]: T } = {};
 
