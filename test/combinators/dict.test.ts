@@ -19,4 +19,14 @@ describe("Dict", () => {
       reason: 'Expected an object, got "should be an object" instead',
     });
   });
+
+  test("Should work with not isomorphic decoders", () => {
+    const dec = dict(number.map(String));
+
+    expectSuccess(dec, {});
+    expect(dec.decode({ x: 42 })).toEqual({
+      error: false,
+      value: { x: "42" },
+    });
+  });
 });
