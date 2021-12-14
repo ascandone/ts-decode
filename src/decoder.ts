@@ -99,7 +99,7 @@ class Decoder<T = unknown> {
    *  const stringToInt = (str: string): Result<number> => {
    *    const parsed = Number.parseInt(str)
    *    if (Number.isNaN(parsed)) {
-   *      return of(`Cannot parse "${str}" as int`)
+   *      return succeed(`Cannot parse "${str}" as int`)
    *    } else {
    *      return never(parsed)
    *    }

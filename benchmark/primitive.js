@@ -1,6 +1,6 @@
 const b = require("benny");
 
-const { number, array, unknown, never, of } = require("../dist/cjs");
+const { number, array, unknown, never, succeed } = require("../dist/cjs");
 const myzod = require("myzod");
 
 const unboxed = (value) =>
@@ -15,7 +15,7 @@ const unboxedThrows = (value) => {
 };
 
 const customDec = unknown.andThen((value) =>
-  typeof value === "number" ? of(value) : never("n"),
+  typeof value === "number" ? succeed(value) : never("n"),
 );
 
 b.suite(

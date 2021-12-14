@@ -1,4 +1,4 @@
-import { never, number, of, unknown } from "../src";
+import { never, number, succeed, unknown } from "../src";
 import { expectFail, expectSuccess } from "./utils";
 
 describe("Decoder", () => {
@@ -12,7 +12,7 @@ describe("Decoder", () => {
 
   describe("decoder.andThen()", () => {
     test("success", () => {
-      const decoder = number.andThen((x) => of(x * 2));
+      const decoder = number.andThen((x) => succeed(x * 2));
       expect(decoder.decode(100)).toStrictEqual({
         error: false,
         value: 200,
@@ -57,7 +57,7 @@ describe("Decoder", () => {
     test("Should allow new decoders", () => {
       const bigint = unknown.andThen((x) =>
         typeof x === "bigint"
-          ? of(x)
+          ? succeed(x)
           : never(`expected a bigint, got ${x} instead`),
       );
 
