@@ -1,4 +1,4 @@
-import { Reason, reasonToXmlString } from "../src/reason";
+import { Reason, reasonToXmlString } from "../src/result";
 
 describe("reasonToXml", () => {
   const reason: Reason = {
