@@ -168,8 +168,13 @@ export const array = <T>(decoder: Decoder<T>): Decoder<T[]> =>
 
 type JObject = { [key: string]: unknown };
 
-type RequiredField<T> = { type: "REQUIRED"; decoder: Decoder<T>; default?: T };
-type OptionalField<T> = { type: "OPTIONAL"; decoder: Decoder<T> };
+export type RequiredField<T> = {
+  type: "REQUIRED";
+  decoder: Decoder<T>;
+  default?: T;
+};
+
+export type OptionalField<T> = { type: "OPTIONAL"; decoder: Decoder<T> };
 
 export type Field<T> = RequiredField<T> | OptionalField<T>;
 
@@ -179,7 +184,7 @@ type SelectOptional<K, V> = V extends OptionalField<unknown> ? K : never;
 type ExtractRequired<T> = T extends RequiredField<infer U> ? U : never;
 type ExtractOptional<T> = T extends OptionalField<infer U> ? U : never;
 
-type ObjectSpecs = { [key: string]: Field<unknown> };
+export type ObjectSpecs = { [key: string]: Field<unknown> };
 
 type DecodedObject<O extends ObjectSpecs> = {
   [key in keyof O as SelectRequired<key, O[key]>]: ExtractRequired<O[key]>;
