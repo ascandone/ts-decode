@@ -10,15 +10,16 @@ const failMsg = (expected: string, got: unknown): Result<never> => ({
 });
 
 /**
- * A type representing a decoder returning a type Result<T>. Note T is the output type, not necessarily the input type
+ * A type representing a decoder returning a type Result<T>. Note T is the
+ * output type, not necessarily the input type
+ *
+ * ```ts
+ * number; // Decoder<number>
+ * number.map((num) => (num + 10).toString()); // Decoder<string>
+ * ```
  *
  * @category Decode
- *
- * @example
- * ```ts
- * number // Decoder<number>
- * number.map(num => (num + 10).toString()) // Decoder<string>
- * ```
+ * @typeParam T The type **produced by** the decoder
  */
 class Decoder<T = unknown> {
   /**
@@ -62,14 +63,13 @@ class Decoder<T = unknown> {
   /**
    * Maps the decoded value (when present)
    *
-   * @category Transform
-   *
-   * @example
    * ```ts
    * const f = n => n.toString() + "!"
    * number.map(f).decode(42) // => ✅ "42!"
    * number.map(f).decode("str") // => 🟥 "Expected a number, got `\"str\"` instead"
    * ```
+   *
+   * @category Transform
    */
   map<U>(f: (value: T) => U): Decoder<U> {
     return this.andThen((value) => of(f(value)));
@@ -78,26 +78,26 @@ class Decoder<T = unknown> {
   /**
    * Applies the given function to the decoded value (when present), and returns the result decoder. Sometimes known as `>>=`/`bind`.
    *
-   * @category Transform
-   *
-   * @example
    * ```ts
-   * const stringToInt = (str: string): Result<number> => {
-   * const parsed = Number.parseInt(str)
-   *
-   * if (Number.isNaN(parsed)) {
-   * return fail(`Cannot parse "${str}" as int`)
-   * } else {
-   * return success(parsed)
-   *}
+   *  const stringToInt = (str: string): Result<number> => {
+   *    const parsed = Number.parseInt(str)
+   *    if (Number.isNaN(parsed)) {
+   *      return of(`Cannot parse "${str}" as int`)
+   *    } else {
+   *      return never(parsed)
+   *    }
    * }
-   * string.andThen(stringToInt).decode(42) // => 🟥 "Expected a string, got `42` instead"
+   *
+   * string.andThen(stringToInt).decode(42) // => 🟥 "Expected a string, got 42 instead"
    * string.andThen(stringToInt).decode("42") // => ✅ 42
    * string.andThen(stringToInt).decode("abc") // => 🟥 "Cannot parse \"abc\" as int"
+   *
    * const f = n => n.toString() + "!"
    * number.map(f).decode(42) // => ✅ "42!"
-   * number.map(f).decode("str") // => 🟥 "Expected a number, got `\"str\"` instead"
+   * number.map(f).decode("str") // => 🟥 "Expected a number, got \"str\" instead"
    * ```
+   *
+   * @category Transform
    */
   andThen<U>(f: (value: T) => Decoder<U>): Decoder<U> {
     return new Decoder((value) => {
@@ -141,9 +141,7 @@ export function of<T>(value: T) {
   }));
 }
 
-/**
- * @category Primitives
- */
+/** @category Primitives */
 export function never(reason: string) {
   return new Decoder<never>(() => ({
     error: true,
