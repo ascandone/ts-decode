@@ -1,6 +1,4 @@
-import { text } from "stream/consumers";
 import { number, dict } from "../../src/index";
-import { assert, shouldFail, shouldPass, typeChecking } from "../TestHelpers";
 import { expectFail, expectSuccess } from "../utils";
 
 describe("Dict", () => {

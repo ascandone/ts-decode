@@ -1,19 +1,5 @@
-import {
-  number,
-  string,
-  array,
-  Decoder,
-  undefined_,
-  object,
-  oneOf,
-  lazy,
-  hardcoded,
-  dict,
-  null_,
-  Infer,
-} from "../../src/index";
-import { assert, shouldFail, shouldPass, typeChecking } from "../TestHelpers";
-import { expectFail, expectSuccess } from "../utils";
+import { number, string, array } from "../../src/index";
+import { expectSuccess } from "../utils";
 
 describe("Array", () => {
   test("Failures", () => {
