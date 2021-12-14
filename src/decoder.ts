@@ -75,7 +75,7 @@ export const unknown = new Decoder((value) => ({
   value,
 }));
 
-type Primitive = string | number | boolean | null | undefined;
+export type Primitive = string | number | boolean | null | undefined;
 
 export const hardcoded = <T extends Primitive>(constant: T): Decoder<T> =>
   new Decoder((value) =>
@@ -245,6 +245,8 @@ class ObjectDecoder<O extends ObjectSpecs> extends Decoder<DecodedObject<O>> {
     return object(mapper(this.specs));
   }
 }
+
+export type { ObjectDecoder };
 
 export const object = <O extends ObjectSpecs>(specs: O) =>
   new ObjectDecoder(specs);
