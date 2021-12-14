@@ -548,7 +548,7 @@ export function dict<T>(
   decoder: Decoder<T>,
 ): Decoder<{ [key: string]: T | undefined }> {
   return new Decoder((value) => {
-    const newObj: { [key: string]: T } = {};
+    const newObj: { [key: string]: T | undefined } = {};
 
     if (typeof value !== "object" || value === null) {
       return failMsg("an object", value);
