@@ -348,6 +348,15 @@ export type OneOf<T extends unknown[]> = T extends [
   : never;
 
 /**
+ * Tries each of the given decoders
+ *
+ * ```ts
+ * const dec = oneOf(number, string) // => Decoder<number | string>
+ *
+ * dec.decode("hi") // => ✅ "hi"
+ * dec.decode(1234) // => ✅ 1234
+ * dec.decode(true) // => 🟥
+ * ```
  * @category Higher order decoders
  */
 export function oneOf<T extends Decoder<any>[]>(
@@ -438,6 +447,8 @@ type ExtractRequired<T> = T extends RequiredField<infer U> ? U : never;
 type ExtractOptional<T> = T extends OptionalField<infer U> ? U : never;
 
 /**
+ * A type representing the fields (either optional or mandatory) required by the {@linkcode object} decoder
+ *
  * @category Higher order decoders
  */
 export type ObjectSpecs = { [key: string]: Field<unknown> };
@@ -449,11 +460,17 @@ type DecodedObject<O extends ObjectSpecs> = {
 };
 
 /**
+ * A class representing a decoder for object types.
+ * Inherits the {@linkcode Decoder} adding a {@linkcode ObjectDecoder.specs} field
+ *
  * @category Decode
  */
 class ObjectDecoder<Specs extends ObjectSpecs> extends Decoder<
   DecodedObject<Specs>
 > {
+  /**
+   * The specs passed to the {@linkcode object} function
+   */
   public readonly specs: Specs;
 
   /**
@@ -502,6 +519,11 @@ class ObjectDecoder<Specs extends ObjectSpecs> extends Decoder<
     this.specs = specs;
   }
 
+  /**
+   * A convenience method for creating a scope for destructuring the objects specs.
+   *
+   * `objDec.mapSpecs(f)` is the same as `object(f(objDec.specs))`
+   */
   mapSpecs<NewSpecs extends ObjectSpecs>(mapper: (specs: Specs) => NewSpecs) {
     return object(mapper(this.specs));
   }
@@ -595,6 +617,12 @@ type Tuple<T extends unknown[]> = T extends [Decoder<infer Hd>, ...infer Tl]
   : [];
 
 /**
+ * Decodes an array with a fixed number of arguments
+ *
+ * ```ts
+ * tuple(number, string).decode([1, "x"]) // => ✅ [1, "x"]
+ * tuple(number, string).decode(["not a number", "x"]) // => 🟥
+ * ```
  * @category Higher order decoders
  */
 export function tuple<T extends Decoder<unknown>[]>(
