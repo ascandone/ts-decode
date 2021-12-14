@@ -83,7 +83,7 @@ class Decoder<T = unknown> {
    * ```ts
    * const f = n => n.toString() + "!"
    * number.map(f).decode(42) // => ✅ "42!"
-   * number.map(f).decode("str") // => 🟥 "Expected a number, got `\"str\"` instead"
+   * number.map(f).decode("str") // => 🟥 "Expected a number, got \"str\" instead"
    * ```
    *
    * @category Transform
