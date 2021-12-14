@@ -1,5 +1,5 @@
-import { number, unknown, string, tuple } from "../../src/index";
-import { expectFail, expectSuccess } from "../utils";
+import { unknown } from "../../src/index";
+import { expectSuccess } from "../utils";
 
 describe("Unknown", () => {
   test("Should always succeed", () => {

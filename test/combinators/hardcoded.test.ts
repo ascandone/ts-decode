@@ -1,5 +1,4 @@
 import { number, Decoder, object, oneOf, hardcoded } from "../../src/index";
-
 import { expectSuccess } from "../utils";
 
 test("Hardcoded", () => {
