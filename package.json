@@ -28,7 +28,7 @@
     "build": "rm -f -r dist/ && npm run build:es6 && npm run build:cjs",
     "build:es6": "tsc --project tsconfig.es6.json",
     "build:cjs": "tsc --project tsconfig.cjs.json",
-    "docs:build": "typedoc src/index.ts  --categorizeByGroup false",
+    "docs:build": "typedoc",
     "prepare": "npm run build"
   },
   "license": "MIT",

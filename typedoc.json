@@ -1,0 +1,13 @@
+{
+  "entryPoints": ["./src/index.ts"],
+  "categorizeByGroup": false,
+  "defaultCategory": "Other",
+  "categoryOrder": [
+    "Decode",
+    "Primitives",
+    "Higher order decoders",
+    "Handle failure",
+    "*",
+    "Other"
+  ]
+}

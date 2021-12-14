@@ -9,6 +9,9 @@ const failMsg = (expected: string, got: unknown): Result<never> => ({
   },
 });
 
+/**
+ * @category Decode
+ */
 class Decoder<T = unknown> {
   constructor(public readonly decode: (value: unknown) => Result<T>) {}
 
@@ -53,78 +56,115 @@ class Decoder<T = unknown> {
 
 export type { Decoder };
 
+/**
+ * @category Decode
+ */
 export type Infer<T> = T extends Decoder<infer U> ? U : never;
 
-export const of = <T>(value: T) =>
-  new Decoder(() => ({
+/**
+ * @category Primitives
+ */
+export function of<T>(value: T) {
+  return new Decoder(() => ({
     error: false,
     value,
   }));
+}
 
-export const never = (reason: string) =>
-  new Decoder<never>(() => ({
+/**
+ * @category Primitives
+ */
+export function never(reason: string) {
+  return new Decoder<never>(() => ({
     error: true,
     reason: {
       type: "FAIL",
       reason,
     },
   }));
+}
 
+/**
+ * @category Primitives
+ */
 export const unknown = new Decoder((value) => ({
   error: false,
   value,
 }));
 
-export type Primitive = string | number | boolean | null | undefined;
-
-export const hardcoded = <T extends Primitive>(constant: T): Decoder<T> =>
-  new Decoder((value) =>
+/**
+ * @category Primitives
+ */
+export function hardcoded<
+  T extends string | number | boolean | null | undefined,
+>(constant: T): Decoder<T> {
+  return new Decoder((value) =>
     value === constant
       ? { error: false, value: constant }
       : failMsg(JSON.stringify(constant), value),
   );
+}
 
-// Primitives
-
+/**
+ * @category Primitives
+ */
 export const number = new Decoder((value) =>
   typeof value === "number"
     ? { error: false, value }
     : failMsg("a number", value),
 );
 
+/**
+ * @category Primitives
+ */
 export const string = new Decoder((value) =>
   typeof value === "string"
     ? { error: false, value }
     : failMsg("a string", value),
 );
 
+/**
+ * @category Primitives
+ */
 export const boolean = new Decoder((value) =>
   typeof value === "boolean"
     ? { error: false, value }
     : failMsg("a boolean", value),
 );
 
+/**
+ * @category Primitives
+ */
 export const null_ = new Decoder<null>((value) =>
   value === null ? { error: false, value } : failMsg("null", value),
 );
 
+/**
+ * @category Primitives
+ */
 export const undefined_ = new Decoder<undefined>((value) =>
   value === undefined ? { error: false, value } : failMsg("undefined", value),
 );
 
 // Higher order decoders
 
-type OneOfReturn<T extends unknown[]> = T extends [
+/**
+ * @category Higher order decoders
+ */
+export type OneOfReturn<T extends unknown[]> = T extends [
   Decoder<infer Hd>,
   ...infer Tl
 ]
   ? Hd | OneOfReturn<Tl>
   : never;
 
-export const oneOf = <T extends Decoder<any>[]>(
+/**
+ * @category Higher order decoders
+ */
+export function oneOf<T extends Decoder<any>[]>(
   ...decoders: T
-): Decoder<OneOfReturn<T>> =>
-  new Decoder((value) => {
+): Decoder<OneOfReturn<T>> {
+  return new Decoder((value) => {
     const reasons: Reason[] = [];
 
     for (const decoder of decoders) {
@@ -139,9 +179,13 @@ export const oneOf = <T extends Decoder<any>[]>(
 
     return { error: true, reason: { type: "ONE_OF", reasons } };
   });
+}
 
-export const array = <T>(decoder: Decoder<T>): Decoder<T[]> =>
-  new Decoder((value) => {
+/**
+ * @category Higher order decoders
+ */
+export function array<T>(decoder: Decoder<T>): Decoder<T[]> {
+  return new Decoder((value) => {
     if (!Array.isArray(value)) {
       return failMsg("an array", value);
     }
@@ -165,17 +209,25 @@ export const array = <T>(decoder: Decoder<T>): Decoder<T[]> =>
 
     return { error: false, value };
   });
+}
 
-type JObject = { [key: string]: unknown };
-
+/**
+ * @category Higher order decoders
+ */
 export type RequiredField<T> = {
   type: "REQUIRED";
   decoder: Decoder<T>;
   default?: T;
 };
 
+/**
+ * @category Higher order decoders
+ */
 export type OptionalField<T> = { type: "OPTIONAL"; decoder: Decoder<T> };
 
+/**
+ * @category Higher order decoders
+ */
 export type Field<T> = RequiredField<T> | OptionalField<T>;
 
 type SelectRequired<K, V> = V extends RequiredField<unknown> ? K : never;
@@ -184,6 +236,9 @@ type SelectOptional<K, V> = V extends OptionalField<unknown> ? K : never;
 type ExtractRequired<T> = T extends RequiredField<infer U> ? U : never;
 type ExtractOptional<T> = T extends OptionalField<infer U> ? U : never;
 
+/**
+ * @category Higher order decoders
+ */
 export type ObjectSpecs = { [key: string]: Field<unknown> };
 
 type DecodedObject<O extends ObjectSpecs> = {
@@ -192,6 +247,9 @@ type DecodedObject<O extends ObjectSpecs> = {
   [key in keyof O as SelectOptional<key, O[key]>]?: ExtractOptional<O[key]>;
 };
 
+/**
+ * @category Decode
+ */
 class ObjectDecoder<O extends ObjectSpecs> extends Decoder<DecodedObject<O>> {
   public readonly specs: O;
 
@@ -214,7 +272,7 @@ class ObjectDecoder<O extends ObjectSpecs> extends Decoder<DecodedObject<O>> {
         const decoder = fieldSpec.decoder;
 
         if (field in value) {
-          const value_ = (value as JObject)[field];
+          const value_ = (value as { [key: string]: unknown })[field];
           const decoded = decoder.decode(value_);
 
           if (decoded.error) {
@@ -248,14 +306,25 @@ class ObjectDecoder<O extends ObjectSpecs> extends Decoder<DecodedObject<O>> {
 
 export type { ObjectDecoder };
 
-export const object = <O extends ObjectSpecs>(specs: O) =>
-  new ObjectDecoder(specs);
+/**
+ * @category Higher order decoders
+ */
+export function object<O extends ObjectSpecs>(specs: O) {
+  return new ObjectDecoder(specs);
+}
 
-export const lazy = <T>(decoderSupplier: () => Decoder<T>): Decoder<T> =>
-  new Decoder((value) => decoderSupplier().decode(value));
+/**
+ * @category Higher order decoders
+ */
+export function lazy<T>(decoderSupplier: () => Decoder<T>): Decoder<T> {
+  return new Decoder((value) => decoderSupplier().decode(value));
+}
 
-export const dict = <T>(decoder: Decoder<T>): Decoder<{ [key: string]: T }> =>
-  new Decoder((value) => {
+/**
+ * @category Higher order decoders
+ */
+export function dict<T>(decoder: Decoder<T>): Decoder<{ [key: string]: T }> {
+  return new Decoder((value) => {
     const newObj: { [key: string]: T } = {};
 
     if (typeof value !== "object" || value === null) {
@@ -279,15 +348,19 @@ export const dict = <T>(decoder: Decoder<T>): Decoder<{ [key: string]: T }> =>
 
     return { error: false, value: newObj };
   });
+}
 
 type Tuple<T extends unknown[]> = T extends [Decoder<infer Hd>, ...infer Tl]
   ? [Hd, ...Tuple<Tl>]
   : [];
 
-export const tuple = <T extends Decoder<unknown>[]>(
+/**
+ * @category Higher order decoders
+ */
+export function tuple<T extends Decoder<unknown>[]>(
   ...decoders: T
-): Decoder<Tuple<T>> =>
-  new Decoder((value) => {
+): Decoder<Tuple<T>> {
+  return new Decoder((value) => {
     const ret: any = [];
 
     if (!Array.isArray(value)) {
@@ -316,3 +389,4 @@ export const tuple = <T extends Decoder<unknown>[]>(
 
     return { error: false, value: ret };
   });
+}
