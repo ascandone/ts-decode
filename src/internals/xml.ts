@@ -28,8 +28,8 @@ export const xmlToStringHelper = (level: number, xml: Xml): string => {
   const indentationTag = indent(level);
 
   switch (xml.type) {
+    /* istanbul ignore next */
     case "text":
-      /* istanbul ignore next */
       return indentationTag + xml.value;
 
     case "node":
