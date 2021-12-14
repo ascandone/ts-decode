@@ -5,8 +5,7 @@
 .tsd-returns,
 .tsd-returns-title,
 .tsd-member .tsd-type-parameters,
-.tsd-member .tsd-type-parameters-title,
-.ts-flagReadonly {
+.tsd-member .tsd-type-parameters-title {
   display: none;
 }
 
