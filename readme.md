@@ -81,6 +81,4 @@ Good thing we printed it out
 </field-type>
 ```
 
-You can find the complete API in this project [wiki](https://github.com/ascandone/ts-decode/wiki/Decoders)
-
-Or you can try it in a [codesanbox](https://codesandbox.io/s/ts-decode-playground-xw3yb?file=/src/index.ts)
+You can find the complete typedocs-generated API [here](https://ts-decode.netlify.app/modules.html) or you can try it in a [codesanbox](https://codesandbox.io/s/ts-decode-playground-xw3yb?file=/src/index.ts)
