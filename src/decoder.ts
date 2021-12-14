@@ -384,6 +384,8 @@ export function array<T>(decoder: Decoder<T>): Decoder<T[]> {
       return failMsg("an array", value);
     }
 
+    const returnValue: T[] = [];
+
     for (let index = 0; index < value.length; index++) {
       const elem: unknown = value[index];
 
@@ -399,9 +401,11 @@ export function array<T>(decoder: Decoder<T>): Decoder<T[]> {
           },
         };
       }
+
+      returnValue.push(result.value);
     }
 
-    return { error: false, value };
+    return { error: false, value: returnValue };
   });
 }
 
@@ -453,17 +457,12 @@ class ObjectDecoder<Specs extends ObjectSpecs> extends Decoder<
    * @ignore
    */
   constructor(specs: Specs) {
-    const mutatesObject =
-      Object.values(specs).find(
-        (field) => field.type === "REQUIRED" && "default" in field,
-      ) !== undefined;
-
     super((value) => {
       if (typeof value !== "object" || value === null) {
         return failMsg("an object", value);
       }
 
-      const returnObject: any = mutatesObject ? { ...value } : value;
+      const returnObject: any = {};
 
       for (const field in specs) {
         const fieldSpec = specs[field];
@@ -480,6 +479,8 @@ class ObjectDecoder<Specs extends ObjectSpecs> extends Decoder<
               reason: { type: "FIELD_TYPE", field, reason: decoded.reason },
             };
           }
+
+          returnObject[field] = decoded.value;
         } else if (fieldSpec.type === "REQUIRED") {
           if ("default" in fieldSpec) {
             returnObject[field] = fieldSpec.default;
