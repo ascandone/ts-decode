@@ -3,6 +3,7 @@ const tsDec = require("../dist/cjs/index");
 const zod = require("zod");
 const myZod = require("myzod");
 const iots = require("io-ts/Decoder");
+const rt = require("runtypes");
 
 const input = {
   x: "str",
@@ -34,6 +35,12 @@ const tsDecDecoder = tsDec.object({
   tag: tsDec.hardcoded("TAG").required,
 });
 
+const runtypesDecoder = rt.Record({
+  x: rt.String,
+  y: rt.Number,
+  tag: rt.Literal("TAG"),
+});
+
 b.suite(
   "Single object",
 
@@ -50,6 +57,10 @@ b.suite(
 
   b.add("io-ts", () => {
     const res = iotsDecoder.decode(input);
+  }),
+
+  b.add("runtypes", () => {
+    const res = runtypesDecoder.check(input);
   }),
 
   b.cycle(),
