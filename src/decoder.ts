@@ -1,4 +1,4 @@
-import { Reason, reasonToJsonString } from "./reason";
+import { Reason, reasonToJsonString } from "./result";
 import { Result } from "./result";
 
 const failMsg = (expected: string, got: unknown): Result<never> => ({
@@ -529,6 +529,20 @@ export function object<O extends ObjectSpecs>(specs: O) {
 }
 
 /**
+ * Wraps a decode into a thunk. Useful for creating decoders for recursive data structures
+ *
+ * ```ts
+ * type Tree = {
+ *   label: string;
+ *   children: Tree[];
+ * };
+ *
+ * const treeDecoder: Decoder<Tree> = object({
+ *   label: string.required,
+ *   children: lazy(() => array(treeDecoder)).required,
+ * });
+ *
+ * ```
  * @category Higher order decoders
  */
 export function lazy<T>(decoderSupplier: () => Decoder<T>): Decoder<T> {
