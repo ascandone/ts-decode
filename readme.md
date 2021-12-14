@@ -1,4 +1,4 @@
-![npm version](https://badgen.net/npm/v/ts-decode) ![build status](https://badgen.net/github/checks/styfle/packagephobia/main) ![codecov](https://badgen.net/codecov/c/github/ascandone/ts-decode/master)
+[![npm version](https://badgen.net/npm/v/ts-decode)](https://www.npmjs.com/package/ts-decode) ![build status](https://badgen.net/github/checks/styfle/packagephobia/main) ![codecov](https://badgen.net/codecov/c/github/ascandone/ts-decode/master)
 
 ![minzipped size](https://badgen.net/bundlephobia/minzip/ts-decode@latest) ![Dependency count](https://badgen.net/bundlephobia/dependency-count/ts-decode) ![tree shaking](https://badgen.net/bundlephobia/tree-shaking/ts-decode@latest)
 
