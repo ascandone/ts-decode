@@ -1,5 +1,8 @@
 import { xmlToString, Xml, text, node } from "./internals/xml";
 
+/**
+ * @category Handle failure
+ */
 export type Reason =
   | { type: "FAIL"; reason: string }
   | { type: "ONE_OF"; reasons: Reason[] }
@@ -7,7 +10,7 @@ export type Reason =
   | { type: "MISSING_FIELD"; field: string }
   | { type: "FIELD_TYPE"; field: string; reason: Reason };
 
-const reasonToXml = (reason: Reason): Xml => {
+function reasonToXml(reason: Reason): Xml {
   switch (reason.type) {
     case "FAIL":
       return node("fail", {}, [text(reason.reason)]);
@@ -27,14 +30,20 @@ const reasonToXml = (reason: Reason): Xml => {
     case "MISSING_FIELD":
       return node("missing-field", { name: reason.field });
   }
-};
+}
 
-export const reasonToXmlString = (reason: Reason): string => {
+/**
+ * @category Handle failure
+ */
+export function reasonToXmlString(reason: Reason): string {
   const xml = reasonToXml(reason);
 
   return xmlToString(xml);
-};
+}
 
-export const reasonToJsonString = (reason: Reason): string => {
+/**
+ * @category Handle failure
+ */
+export function reasonToJsonString(reason: Reason): string {
   return JSON.stringify(reason, null, 2);
-};
+}

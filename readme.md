@@ -1,4 +1,4 @@
-![npm version](https://badgen.net/npm/v/ts-decode) ![build status](https://badgen.net/github/checks/styfle/packagephobia/main) ![codecov](https://badgen.net/codecov/c/github/ascandone/ts-decode/master)
+[![npm version](https://badgen.net/npm/v/ts-decode)](https://www.npmjs.com/package/ts-decode) ![build status](https://badgen.net/github/checks/styfle/packagephobia/main) ![codecov](https://badgen.net/codecov/c/github/ascandone/ts-decode/master)
 
 ![minzipped size](https://badgen.net/bundlephobia/minzip/ts-decode@latest) ![Dependency count](https://badgen.net/bundlephobia/dependency-count/ts-decode) ![tree shaking](https://badgen.net/bundlephobia/tree-shaking/ts-decode@latest)
 
@@ -81,6 +81,4 @@ Good thing we printed it out
 </field-type>
 ```
 
-You can find the complete API in this project [wiki](https://github.com/ascandone/ts-decode/wiki/Decoders)
-
-Or you can try it in a [codesanbox](https://codesandbox.io/s/ts-decode-playground-xw3yb?file=/src/index.ts)
+You can find the complete typedocs-generated API [here](https://ts-decode.netlify.app/modules.html) or you can try it in a [codesanbox](https://codesandbox.io/s/ts-decode-playground-xw3yb?file=/src/index.ts)

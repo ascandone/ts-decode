@@ -124,6 +124,18 @@ describe("Nil", () => {
     expectSuccess(dec, { x: null });
     expectSuccess(dec, {});
   });
+
+  test("works with non-isomorphic decoders without mutating the input", () => {
+    const input = { x: 42 };
+    const inputCopy = { ...input };
+
+    const dec = object({ x: number.map(String).required }).decodeUnsafeThrow(
+      input,
+    );
+
+    expect(dec).toEqual({ x: "42" });
+    expect(input).toEqual(inputCopy);
+  });
 });
 
 describe("ObjectDecoder class", () => {

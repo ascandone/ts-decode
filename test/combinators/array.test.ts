@@ -17,4 +17,14 @@ describe("Array", () => {
 
     expectSuccess(array(number), [1, 2, 3]);
   });
+
+  test("Works with non-isomorphic decoder without mutating the input", () => {
+    const input = [1, 2, 3];
+    const inputCopy = [...input];
+
+    const dec = array(number.map(String));
+
+    expect(dec.decodeUnsafeThrow(input)).toEqual(["1", "2", "3"]);
+    expect(input).toEqual(inputCopy);
+  });
 });
