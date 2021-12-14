@@ -10,8 +10,8 @@ const failMsg = (expected: string, got: unknown): Result<never> => ({
 });
 
 /**
- * A type representing a decoder returning a type Result<T>. Note T is the
- * output type, not necessarily the input type
+ * A type representing a decoder returning a {@linkcode Result} of type `T`.
+ * Note T is the output type, not necessarily the input type.
  *
  * ```ts
  * number; // Decoder<number>
@@ -23,6 +23,12 @@ const failMsg = (expected: string, got: unknown): Result<never> => ({
  */
 class Decoder<T = unknown> {
   /**
+   * Run the decode through the given value (of unknown type) and produce a {@linkcode Result}
+   *
+   * ```ts
+   * number.decodeString("42") // => ✅ 42
+   * number.decodeString(`"42"`) // => 🟥 "Expected a number, got \"42\" instead"
+   * ```
    * @category Decode
    */
   public readonly decode: (value: unknown) => Result<T>;
@@ -35,7 +41,14 @@ class Decoder<T = unknown> {
   }
 
   /**
-   *  @category Decode
+   * Like {@linkcode Decoder.decode}, but applies `JSON.parse()` before
+   *
+   * ```ts
+   * number.decodeString("42") // => ✅ 42
+   * number.decodeString(`"42"`) // => 🟥 "Expected a number, got \"42\" instead"
+   * ```
+   *
+   * @category Decode
    */
   decodeString(json: string): Result<T> {
     try {
@@ -49,7 +62,11 @@ class Decoder<T = unknown> {
   }
 
   /**
-   *  @category Decode
+   * Like {@linkcode Decoder.decode}, but instead of returning a Result, directly returns the decoded value, or throws an error on failure
+   *
+   * ⚠️ throwing errors defeats the whole purpose of type soundness. decoder.decode() is generally preferable
+   *
+   * @category Decode
    */
   decodeUnsafeThrow(value: unknown): T {
     const decoded = this.decode(value);
@@ -107,16 +124,50 @@ class Decoder<T = unknown> {
   }
 
   /**
+   * Represents a mandatory field in a object. Used with the {@linkcode object} decoder
+   *
+   * ```ts
+   * //  Decoder<{ x: string }>
+   * const decoder = object({ x: string.required })
+   * decoder.decode({ x: "str" }) // =>  ✅ { x: "str" }
+   * decoder.decode({ x: 42 }) // =>  🟥
+   * decoder.decode({ }) // =>  🟥
+   * decoder.decode({ x: undefined }) // =>  🟥
+   * decoder.decode({ x: null }) // =>  🟥
+   * ```
+   *
    *  @category Object
    */
   required: RequiredField<T> = { type: "REQUIRED", decoder: this };
 
   /**
+   * Represents a mandatory field in a object. Used with the {@linkcode object} decoder
+   *
+   * ```ts
+   * //  Decoder<{ x?: string | undefined }>
+   * const decoder = object({ x: string.optional })
+   * decoder.decode({ x: "str" }) // =>  ✅ { x: "str" }
+   * decoder.decode({ x: 42 }) // =>  🟥
+   * decoder.decode({ }) // =>  ✅ { }
+   * decoder.decode({ x: undefined }) // =>  🟥
+   * decoder.decode({ x: null }) // =>  🟥
+   * ```
    *  @category Object
    */
   optional: OptionalField<T> = { type: "OPTIONAL", decoder: this };
 
   /**
+   * Represents an required field in a object, but instead of failing when field is not present,
+   * the given value is used. Used with the {@linkcode object} decoder
+   *
+   * ```ts
+   * const decoder = object({ x: string.default("NONE") })
+   * decoder.decode({ x: "str" }) // =>  ✅ { x: "str" }
+   * decoder.decode({ x: 42 }) // =>  🟥
+   * decoder.decode({ }) // =>  ✅ { x: "NONE" }
+   * decoder.decode({ x: undefined }) // =>  🟥
+   * decoder.decode({ x: null }) // =>  🟥
+   * ```
    *  @category Object
    */
   default(value: T): RequiredField<T> {
