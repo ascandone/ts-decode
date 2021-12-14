@@ -66,5 +66,5 @@ b.suite(
   b.cycle(),
   b.complete(),
 
-  b.save({ file: "single-object", format: "chart.html" }),
+  b.save({ file: "single object", format: "chart.html" }),
 );

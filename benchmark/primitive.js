@@ -45,4 +45,6 @@ b.suite(
 
   b.cycle(),
   b.complete(),
+
+  b.save({ file: "primitive", format: "chart.html" }),
 );
