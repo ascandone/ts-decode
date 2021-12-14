@@ -337,13 +337,14 @@ export const undefined_ = new Decoder<undefined>((value) =>
 // Higher order decoders
 
 /**
+ * @ignore
  * @category Higher order decoders
  */
-export type OneOfReturn<T extends unknown[]> = T extends [
+export type OneOf<T extends unknown[]> = T extends [
   Decoder<infer Hd>,
   ...infer Tl
 ]
-  ? Hd | OneOfReturn<Tl>
+  ? Hd | OneOf<Tl>
   : never;
 
 /**
@@ -351,7 +352,7 @@ export type OneOfReturn<T extends unknown[]> = T extends [
  */
 export function oneOf<T extends Decoder<any>[]>(
   ...decoders: T
-): Decoder<OneOfReturn<T>> {
+): Decoder<OneOf<T>> {
   return new Decoder((value) => {
     const reasons: Reason[] = [];
 
@@ -410,6 +411,7 @@ export function array<T>(decoder: Decoder<T>): Decoder<T[]> {
 }
 
 /**
+ * @ignore
  * @category Higher order decoders
  */
 export type RequiredField<T> = {
@@ -419,6 +421,7 @@ export type RequiredField<T> = {
 };
 
 /**
+ * @ignore
  * @category Higher order decoders
  */
 export type OptionalField<T> = { type: "OPTIONAL"; decoder: Decoder<T> };
