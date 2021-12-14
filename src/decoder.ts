@@ -89,7 +89,7 @@ class Decoder<T = unknown> {
    * @category Transform
    */
   map<U>(f: (value: T) => U): Decoder<U> {
-    return this.andThen((value) => of(f(value)));
+    return this.andThen((value) => succeed(f(value)));
   }
 
   /**
@@ -178,21 +178,53 @@ class Decoder<T = unknown> {
 export type { Decoder };
 
 /**
+ * Utility type useful for extracting the return type of a Decoder
+ *
+ * ```ts
+ * const decoder = object({
+ *   x: number.required,
+ *   y: string.optional,
+ * })
+ *
+ *
+ * type MyType = Infer<typeof decoder>
+ *
+ * /*
+ * Inferred as:
+ *
+ * {
+ *   x: number,
+ *   y?: string | undefined
+ * }
+ * ```
  * @category Decode
  */
 export type Infer<T> = T extends Decoder<infer U> ? U : never;
 
 /**
+ * A decoder that always returns the same value, ignoring the given input.
+ *
+ * ```ts
+ * succeed(42).decode("ignored value") // =>  ✅ 42
+ * ```
  * @category Primitives
  */
-export function of<T>(value: T) {
+export function succeed<T>(value: T) {
   return new Decoder(() => ({
     error: false,
     value,
   }));
 }
 
-/** @category Primitives */
+/**
+ * A decoder that never succeeds.
+ *
+ * ```ts
+ * never("invalid value").decode(42) // => 🟥 "invalid value"
+ * ```
+ * @category Primitives
+ *
+ */
 export function never(reason: string) {
   return new Decoder<never>(() => ({
     error: true,
@@ -204,6 +236,12 @@ export function never(reason: string) {
 }
 
 /**
+ * Leave the value as it is without making any assumptions about its type.
+ * Useful for dealing with types later
+ *
+ * ```ts
+ * unknown.decode([1, 2, 3]) // => ✅ [1, 2, 3]
+ * ```
  * @category Primitives
  */
 export const unknown = new Decoder((value) => ({
@@ -212,6 +250,12 @@ export const unknown = new Decoder((value) => ({
 }));
 
 /**
+ * Decodes an exact value. Useful in combination with {@linkcode oneOf} for creating enums.
+ * ```ts
+ * const dec = hardcoded("TAG") // => Decoder<"TAG">
+ * dec.decode("TAG") // => ✅ "TAG"
+ * dec.decode("not tag") // => 🟥 "Expected "TAG", got \"not tag\" instead"
+ * ```
  * @category Primitives
  */
 export function hardcoded<
@@ -225,6 +269,12 @@ export function hardcoded<
 }
 
 /**
+ * Decodes a number
+ *
+ * ```ts
+ * number.decode(42) // => ✅ 42
+ * number.decode("42") // => 🟥 "Expected a number, got \"42\" instead"
+ * ```
  * @category Primitives
  */
 export const number = new Decoder((value) =>
@@ -234,6 +284,8 @@ export const number = new Decoder((value) =>
 );
 
 /**
+ * Decodes a string
+ *
  * @category Primitives
  */
 export const string = new Decoder((value) =>
@@ -243,6 +295,8 @@ export const string = new Decoder((value) =>
 );
 
 /**
+ * Decodes a boolean
+ *
  * @category Primitives
  */
 export const boolean = new Decoder((value) =>
@@ -252,6 +306,13 @@ export const boolean = new Decoder((value) =>
 );
 
 /**
+ * Decodes the value null
+ *
+ * ```ts
+ * null_.decode(null) // => ✅ null
+ * null_.decode(undefined) // => 🟥 "Expected null, got undefined instead"
+ * ```
+ *
  * @category Primitives
  */
 export const null_ = new Decoder<null>((value) =>
@@ -259,6 +320,13 @@ export const null_ = new Decoder<null>((value) =>
 );
 
 /**
+ * Decodes the value undefined
+ *
+ * ```ts
+ * undefined_.decode(undefined) // => ✅ undefined
+ * undefined_decode(null) // => 🟥 "Expected undefined, got null instead"
+ * ```
+ *
  * @category Primitives
  */
 export const undefined_ = new Decoder<undefined>((value) =>
