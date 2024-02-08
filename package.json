@@ -21,7 +21,7 @@
     "parsing"
   ],
   "scripts": {
-    "test": "vitest --run",
+    "test": "vitest --run --coverage",
     "test:watch": "vitest",
     "linter:check": "prettier src/* test/* --check",
     "typescript:check": "tsc --noEmit",
@@ -36,6 +36,7 @@
     "@babel/preset-env": "^7.16.4",
     "@babel/preset-typescript": "^7.16.0",
     "@types/jest": "^27.4.1",
+    "@vitest/coverage-v8": "^1.2.2",
     "add": "^2.0.6",
     "benny": "^3.7.1",
     "codecov": "^3.8.3",
