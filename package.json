@@ -21,8 +21,8 @@
     "parsing"
   ],
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watchAll",
+    "test": "vitest --run",
+    "test:watch": "vitest",
     "linter:check": "prettier src/* test/* --check",
     "typescript:check": "tsc --noEmit",
     "build": "rm -f -r dist/ && npm run build:es6 && npm run build:cjs",
@@ -35,19 +35,19 @@
   "devDependencies": {
     "@babel/preset-env": "^7.16.4",
     "@babel/preset-typescript": "^7.16.0",
-    "@types/jest": "^27.0.3",
+    "@types/jest": "^27.4.1",
     "add": "^2.0.6",
     "benny": "^3.7.1",
     "codecov": "^3.8.3",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
-    "jest": "^27.4.3",
     "myzod": "^1.8.6",
     "prettier": "^2.5.0",
     "runtypes": "^6.5.0",
     "ts-node": "^10.4.0",
     "typedoc": "^0.22.10",
     "typescript": "^4.5.2",
+    "vitest": "^1.2.2",
     "zod": "^3.11.6"
   }
 }
