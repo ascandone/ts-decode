@@ -583,11 +583,9 @@ export function lazy<T>(decoderSupplier: () => Decoder<T>): Decoder<T> {
  * ```
  * @category Higher order decoders
  */
-export function dict<T>(
-  decoder: Decoder<T>,
-): Decoder<{ [key: string]: T | undefined }> {
+export function dict<T>(decoder: Decoder<T>): Decoder<{ [key: string]: T }> {
   return new Decoder((value) => {
-    const newObj: { [key: string]: T | undefined } = {};
+    const newObj: { [key: string]: T } = {};
 
     if (typeof value !== "object" || value === null) {
       return failMsg("an object", value);
