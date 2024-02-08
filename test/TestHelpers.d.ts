@@ -9,9 +9,5 @@ export type shouldFail = false;
 
 export type assert<_ extends true[]> = void;
 
-export type typeChecking<T, U, Expect extends true | false> = Equals<
-  T,
-  U
-> extends Expect
-  ? true
-  : false;
+export type typeChecking<T, U, Expect extends true | false> =
+  Equals<T, U> extends Expect ? true : false;

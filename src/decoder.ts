@@ -342,7 +342,7 @@ export const undefined_ = new Decoder<undefined>((value) =>
  */
 export type OneOf<T extends unknown[]> = T extends [
   Decoder<infer Hd>,
-  ...infer Tl
+  ...infer Tl,
 ]
   ? Hd | OneOf<Tl>
   : never;
