@@ -485,7 +485,7 @@ class ObjectDecoder<Specs extends ObjectSpecs> extends Decoder<
       const returnObject: any = {};
 
       for (const field in specs) {
-        const fieldSpec = specs[field];
+        const fieldSpec = specs[field]!;
 
         const decoder = fieldSpec.decoder;
 
@@ -640,8 +640,8 @@ export function tuple<T extends Decoder<unknown>[]>(
     }
 
     for (let index = 0; index < decoders.length; index++) {
-      const decoder = decoders[index];
-      const arrayValue = value[index];
+      const decoder = decoders[index]!;
+      const arrayValue = value[index]!;
 
       const result = decoder.decode(arrayValue);
 
